@@ -23,3 +23,19 @@ export interface ScheduleState {
   events: CalendarEvent[];
   goals: Goal[];
 }
+
+export interface ClassEntry {
+  name: string;
+  days: string[];   // e.g. ["Mon", "Wed"]
+  startTime: string;
+  endTime: string;
+}
+
+export interface UserProfile {
+  name: string;
+  school: string;
+  major: string;
+  year: string;
+  classes: ClassEntry[];
+  goals: string[];  // free-text goals entered during onboarding
+}
