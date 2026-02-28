@@ -13,7 +13,7 @@ export const generateEventsFromGemini = async (prompt, apiKey) => {
 
   try {
     const response = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
       {
         contents: [{
           parts: [{
@@ -24,9 +24,15 @@ export const generateEventsFromGemini = async (prompt, apiKey) => {
       {
         headers: {
           'Content-Type': 'application/json',
+          'x-goog-api-key': apiKey,
         }
       }
     );
+
+    // Validate response structure
+    if (!response.data?.candidates?.[0]?.content?.parts?.[0]?.text) {
+      throw new Error('Invalid response structure from Gemini API');
+    }
 
     const text = response.data.candidates[0].content.parts[0].text;
     
@@ -40,6 +46,11 @@ export const generateEventsFromGemini = async (prompt, apiKey) => {
     
     const events = JSON.parse(jsonText);
     
+    // Validate events array structure
+    if (!Array.isArray(events)) {
+      throw new Error('Response is not an array');
+    }
+    
     // Convert string dates to Date objects
     return events.map(event => ({
       ...event,
@@ -48,6 +59,9 @@ export const generateEventsFromGemini = async (prompt, apiKey) => {
     }));
   } catch (error) {
     console.error('Error generating events from Gemini:', error);
-    throw new Error('Failed to generate events from Gemini API');
+    if (error instanceof SyntaxError) {
+      throw new Error('Failed to parse JSON response from Gemini API: ' + error.message);
+    }
+    throw error.message ? error : new Error('Failed to generate events from Gemini API');
   }
 };

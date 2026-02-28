@@ -25,10 +25,13 @@ const Sidebar = ({ onGenerateEvents }) => {
 
     setIsLoading(true);
     
+    // Sanitize inputs by trimming and limiting length
+    const sanitizeInput = (input) => input.trim().substring(0, 500);
+    
     const prompt = `Create a weekly schedule based on the following information:
-${academicClasses ? `Academic Classes: ${academicClasses}` : ''}
-${sportsPractice ? `Sports Practice: ${sportsPractice}` : ''}
-${careerGoals ? `Career Goals: ${careerGoals}` : ''}
+${academicClasses ? `Academic Classes: ${sanitizeInput(academicClasses)}` : ''}
+${sportsPractice ? `Sports Practice: ${sanitizeInput(sportsPractice)}` : ''}
+${careerGoals ? `Career Goals: ${sanitizeInput(careerGoals)}` : ''}
 
 Generate a realistic weekly schedule with specific dates and times for the next 7 days starting from today.`;
 
@@ -56,6 +59,9 @@ Generate a realistic weekly schedule with specific dates and times for the next 
             onChange={(e) => setApiKey(e.target.value)}
             placeholder="Enter your API key"
           />
+          <small style={{ color: '#666', fontSize: '12px', marginTop: '4px', display: 'block' }}>
+            Your API key is only used for this session and never stored
+          </small>
         </div>
 
         <div className="form-group">
@@ -66,6 +72,7 @@ Generate a realistic weekly schedule with specific dates and times for the next 
             onChange={(e) => setAcademicClasses(e.target.value)}
             placeholder="e.g., Math 101, Physics, Chemistry..."
             rows="3"
+            maxLength="500"
           />
         </div>
 
@@ -77,6 +84,7 @@ Generate a realistic weekly schedule with specific dates and times for the next 
             onChange={(e) => setSportsPractice(e.target.value)}
             placeholder="e.g., Basketball practice, Swimming..."
             rows="3"
+            maxLength="500"
           />
         </div>
 
@@ -88,6 +96,7 @@ Generate a realistic weekly schedule with specific dates and times for the next 
             onChange={(e) => setCareerGoals(e.target.value)}
             placeholder="e.g., Software Engineering, Research..."
             rows="3"
+            maxLength="500"
           />
         </div>
 
