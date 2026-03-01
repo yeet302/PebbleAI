@@ -87,22 +87,39 @@ function getEventStyle(startTime: string, endTime: string) {
 
 function layoutEvents(events: CalendarEvent[]) {
   const sorted = [...events].sort((a, b) => a.startTime.localeCompare(b.startTime));
+
+  const overlaps = (a: CalendarEvent, b: CalendarEvent) =>
+    a.startTime < b.endTime && b.startTime < a.endTime;
+
+  // Assign each event to the first available column slot
   const slots: CalendarEvent[][] = [];
+  const eventSlot = new Map<string, number>();
+
   for (const event of sorted) {
     let placed = false;
-    for (const slot of slots) {
-      if (slot[slot.length - 1].endTime <= event.startTime) {
-        slot.push(event); placed = true; break;
+    for (let i = 0; i < slots.length; i++) {
+      if (slots[i][slots[i].length - 1].endTime <= event.startTime) {
+        slots[i].push(event);
+        eventSlot.set(event.id, i);
+        placed = true;
+        break;
       }
     }
-    if (!placed) slots.push([event]);
+    if (!placed) {
+      eventSlot.set(event.id, slots.length);
+      slots.push([event]);
+    }
   }
-  const totalSlots = slots.length || 1;
-  return sorted.map((event) => ({
-    event,
-    slotIndex: slots.findIndex((s) => s.includes(event)),
-    totalSlots,
-  }));
+
+  return sorted.map((event) => {
+    // Only count columns that have an event overlapping THIS event's time span
+    const activeSlots = slots.filter((slot) => slot.some((e) => overlaps(e, event))).length;
+    return {
+      event,
+      slotIndex: eventSlot.get(event.id)!,
+      totalSlots: activeSlots || 1,
+    };
+  });
 }
 
 // ── sub-views ────────────────────────────────────────────────────────────────
