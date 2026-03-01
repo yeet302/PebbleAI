@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ScheduleState, Message, CalendarEvent, UserProfile, SchedulingOption } from "@/types";
+import { ScheduleState, Message, CalendarEvent, UserProfile, SchedulingOption, WeekScore } from "@/types";
 import Calendar from "@/components/Calendar";
 import GoalList from "@/components/GoalList";
 import Chat from "@/components/Chat";
 import Landing from "@/components/Landing";
 import WeeklyReview from "@/components/WeeklyReview";
 import ScoreCard from "@/components/ScoreCard";
+import ScorePanel from "@/components/ScorePanel";
 import SchedulePickerModal from "@/components/SchedulePickerModal";
 
 const SCHEDULE_KEY = "pebble-schedule";
@@ -18,6 +19,20 @@ const GC_ACCESS_KEY = "pebble-gc-access";
 const GC_REFRESH_KEY = "pebble-gc-refresh";
 const GC_EXPIRY_KEY = "pebble-gc-expiry";
 const PROFILE_KEY = "pebble-profile";
+const SCORE_CACHE_KEY = "pebble-score-cache";
+
+function scheduleHash(schedule: ScheduleState): string {
+  const today = new Date().toISOString().split("T")[0];
+  const weekEnd = new Date();
+  weekEnd.setDate(weekEnd.getDate() + 7);
+  const weekEndStr = weekEnd.toISOString().split("T")[0];
+  const ids = schedule.events
+    .filter((e) => e.date >= today && e.date <= weekEndStr)
+    .map((e) => e.id)
+    .sort()
+    .join(",");
+  return `${today}:${ids}`;
+}
 const INITIAL_STATE: ScheduleState = { events: [], goals: [] };
 
 export default function HomePage() {
@@ -28,6 +43,9 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null);
   const [showReview, setShowReview] = useState(false);
   const [showScore, setShowScore] = useState(false);
+  const [weekScore, setWeekScore] = useState<WeekScore | null>(null);
+  const [scoreLoading, setScoreLoading] = useState(false);
+  const [scoreCacheHash, setScoreCacheHash] = useState<string>("");
   const [pendingOptions, setPendingOptions] = useState<SchedulingOption[] | null>(null);
   const [highlightedEventIds, setHighlightedEventIds] = useState<string[]>([]);
   const [gcConnected, setGcConnected] = useState(false);
@@ -61,6 +79,16 @@ export default function HomePage() {
     // Load profile
     const storedProfile = localStorage.getItem(PROFILE_KEY);
     if (storedProfile) setProfile(JSON.parse(storedProfile));
+
+    // Load cached score (only if hash still matches)
+    const cachedScore = localStorage.getItem(SCORE_CACHE_KEY);
+    if (cachedScore) {
+      const { hash, score } = JSON.parse(cachedScore);
+      if (hash === scheduleHash(loadedSchedule)) {
+        setWeekScore(score);
+        setScoreCacheHash(hash);
+      }
+    }
 
     // 2. Google Calendar sync
     const accessToken = localStorage.getItem(GC_ACCESS_KEY);
@@ -146,6 +174,34 @@ export default function HomePage() {
     localStorage.setItem(MESSAGES_KEY, JSON.stringify(messages));
   }, [messages]);
 
+  // Auto-score: debounced, cached by schedule hash
+  useEffect(() => {
+    if (!started) return;
+    const hash = scheduleHash(schedule);
+    if (hash === scoreCacheHash) return;
+
+    setScoreLoading(true);
+    const timer = setTimeout(async () => {
+      try {
+        const currentProfile: UserProfile | null = JSON.parse(localStorage.getItem(PROFILE_KEY) ?? "null");
+        const res = await fetch("/api/score", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ schedule, profile: currentProfile }),
+        });
+        if (!res.ok) return;
+        const score: WeekScore = await res.json();
+        setWeekScore(score);
+        setScoreCacheHash(hash);
+        localStorage.setItem(SCORE_CACHE_KEY, JSON.stringify({ hash, score }));
+      } finally {
+        setScoreLoading(false);
+      }
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, [schedule, started]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const begin = (importedEvents: CalendarEvent[] = []) => {
     const next: ScheduleState = { events: importedEvents, goals: [] };
     setSchedule(next);
@@ -221,7 +277,10 @@ export default function HomePage() {
     setGcConnected(false);
     setProfile(null);
     setPendingOptions(null);
+    setWeekScore(null);
+    setScoreCacheHash("");
     localStorage.removeItem(SCHEDULE_KEY);
+    localStorage.removeItem(SCORE_CACHE_KEY);
     localStorage.removeItem(MESSAGES_KEY);
     localStorage.removeItem(STARTED_KEY);
     localStorage.removeItem(GC_ACCESS_KEY);
@@ -322,14 +381,6 @@ export default function HomePage() {
               Edit Preferences
             </button>
           )}
-          {started && (
-            <button
-              onClick={() => setShowScore(true)}
-              className="text-xs text-gray-500 border border-gray-200 rounded-lg px-3 py-1.5 hover:border-blue-300 hover:text-blue-600 transition-colors"
-            >
-              Score Week
-            </button>
-          )}
           <button
             onClick={() => setShowReview(true)}
             className="text-xs text-gray-500 border border-gray-200 rounded-lg px-3 py-1.5 hover:border-blue-300 hover:text-blue-600 transition-colors"
@@ -341,13 +392,29 @@ export default function HomePage() {
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar — Goals */}
+        {/* Sidebar — Goals + Week Score */}
         <aside className="w-56 border-r bg-white flex flex-col flex-shrink-0">
           <div className="px-4 py-3 border-b">
             <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Goals</p>
           </div>
-          <div className="flex-1 overflow-y-auto p-3">
-            <GoalList goals={schedule.goals} events={schedule.events} />
+          <div className="flex-1 overflow-y-auto">
+            <div className="p-3">
+              <GoalList goals={schedule.goals} events={schedule.events} />
+            </div>
+            {started && (scoreLoading || weekScore) && (
+              <>
+                <div className="px-4 py-3 border-t border-b">
+                  <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Week Score</p>
+                </div>
+                <div className="p-3">
+                  <ScorePanel
+                    score={weekScore}
+                    loading={scoreLoading}
+                    onViewDetails={() => setShowScore(true)}
+                  />
+                </div>
+              </>
+            )}
           </div>
         </aside>
 
