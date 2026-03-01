@@ -1,67 +1,93 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { ScheduleState } from "@/types";
+import { ScheduleState, ScheduleDiff, Message, ChatResponse } from "@/types";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
-const getSystemPrompt = () => `You are GoalkeeperAI, a personal scheduling assistant.
-You manage a user's calendar events and goals. You receive the current schedule as JSON and a user instruction.
-You must return ONLY a valid JSON object matching the ScheduleState schema — no markdown, no explanation.
+const SYSTEM_PROMPT = `You are GoalkeeperAI, a personal scheduling assistant having a conversation with the user.
+Your job is to understand what the user wants before making schedule changes.
 
-Schema:
+RESPONSE FORMAT — always return valid JSON, no markdown:
 {
-  "events": [
-    {
-      "id": "string (uuid)",
-      "title": "string",
-      "date": "YYYY-MM-DD",
-      "startTime": "HH:MM",
-      "endTime": "HH:MM",
-      "category": "class" | "study" | "gym" | "work" | "goal" | "personal",
-      "description": "string (optional)",
-      "recurring": "daily" | "weekly" | "none"
-    }
-  ],
-  "goals": [
-    {
-      "id": "string (uuid)",
-      "title": "string",
-      "type": "short-term" | "long-term",
-      "description": "string (optional)",
-      "deadline": "YYYY-MM-DD (optional)"
-    }
-  ]
+  "message": "what you say to the user",
+  "diff": { ...only when making changes... } or null
 }
 
-Rules:
-- Preserve existing event IDs when modifying events. Generate new UUIDs for new items.
-- When the user adds recurring events, create individual entries for the next 4 weeks.
-- When the user adds a goal, ALWAYS generate concrete calendar events that support it for the next 4 weeks. For example, a LeetCode goal should create daily "LeetCode Practice" study events; a fitness goal should create gym events; an academic goal should create study blocks.
-- Prioritize goals when scheduling study/work blocks.
-- Keep schedules realistic — include breaks, sleep, and meals.
-- Today's date is ${new Date().toISOString().split("T")[0]}. Use this to generate dates relative to today.`;
+Diff schema (use null if not making changes yet):
+{
+  "addEvents": [], "updateEvents": [], "removeEventIds": [],
+  "addGoals": [], "updateGoals": [], "removeGoalIds": []
+}
 
+Event fields: id (uuid), title, date (YYYY-MM-DD), startTime (HH:MM), endTime (HH:MM),
+  category ("class"|"study"|"gym"|"work"|"goal"|"personal"), description?, recurring ("daily"|"weekly"|"none")
 
+Goal fields: id (uuid), title, type ("short-term"|"long-term"), description?, deadline?
 
-export async function updateSchedule(
-  currentState: ScheduleState,
-  userInstruction: string
-): Promise<ScheduleState> {
+BEHAVIOR:
+- If the request is vague (e.g. "I want to get fit", "help me study more"), ask ONE focused clarifying question about timing, frequency, or duration.
+- If the request is specific enough, make the change immediately and confirm with a friendly message.
+- Never ask more than 2 clarifying questions before committing — after 2, make a reasonable decision and go.
+- When adding a goal, always add it to addGoals AND create supporting calendar events in addEvents for the next 4 weeks.
+- Keep responses short and conversational.
+- Today's date is ${new Date().toISOString().split("T")[0]}.`;
+
+function buildPrompt(messages: Message[], currentState: ScheduleState): string {
+  const summary = {
+    goals: currentState.goals.map((g) => ({ id: g.id, title: g.title })),
+    events: currentState.events.map((e) => ({ id: e.id, title: e.title, date: e.date, startTime: e.startTime, endTime: e.endTime })),
+  };
+
+  const history = messages.map((m) => `${m.role === "user" ? "User" : "Assistant"}: ${m.content}`).join("\n");
+
+  return `Current schedule (${currentState.events.length} events, ${currentState.goals.length} goals):
+${JSON.stringify(summary)}
+
+Conversation:
+${history}
+
+Respond with JSON only.`;
+}
+
+function applyDiff(current: ScheduleState, diff: Partial<ScheduleDiff>): ScheduleState {
+  let events = [...current.events];
+  let goals = [...current.goals];
+
+  if (diff.removeEventIds?.length)
+    events = events.filter((e) => !diff.removeEventIds!.includes(e.id));
+  if (diff.removeGoalIds?.length)
+    goals = goals.filter((g) => !diff.removeGoalIds!.includes(g.id));
+
+  if (diff.updateEvents?.length)
+    events = events.map((e) => diff.updateEvents!.find((u) => u.id === e.id) ?? e);
+  if (diff.updateGoals?.length)
+    goals = goals.map((g) => diff.updateGoals!.find((u) => u.id === g.id) ?? g);
+
+  if (diff.addEvents?.length)
+    events = [...events, ...diff.addEvents];
+  if (diff.addGoals?.length)
+    goals = [...goals, ...diff.addGoals];
+
+  return { events, goals };
+}
+
+function parseJSON(raw: string): unknown {
+  const cleaned = raw.trim().replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
+  return JSON.parse(cleaned);
+}
+
+export async function chat(
+  messages: Message[],
+  currentState: ScheduleState
+): Promise<{ response: ChatResponse; updatedState: ScheduleState }> {
   const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-  const prompt = `Current schedule:
-${JSON.stringify(currentState, null, 2)}
-
-User instruction: ${userInstruction}
-
-Return the updated schedule as JSON only.`;
-
   const result = await model.generateContent([
-    { text: getSystemPrompt() },
-    { text: prompt },
+    { text: SYSTEM_PROMPT },
+    { text: buildPrompt(messages, currentState) },
   ]);
 
-  const raw = result.response.text().trim();
-  // Strip markdown code fences if Gemini wraps the response
-  const json = raw.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
-  return JSON.parse(json) as ScheduleState;
+  const parsed = parseJSON(result.response.text()) as ChatResponse;
+  const updatedState = parsed.diff ? applyDiff(currentState, parsed.diff) : currentState;
+
+  return { response: parsed, updatedState };
 }

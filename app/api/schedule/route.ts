@@ -1,22 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
-import { updateSchedule } from "@/lib/gemini";
-import { ScheduleState } from "@/types";
+import { chat } from "@/lib/gemini";
+import { ScheduleState, Message } from "@/types";
 
 export async function POST(req: NextRequest) {
   try {
-    const { currentState, instruction } = await req.json() as {
+    const { messages, currentState } = await req.json() as {
+      messages: Message[];
       currentState: ScheduleState;
-      instruction: string;
     };
 
-    if (!instruction?.trim()) {
-      return NextResponse.json({ error: "Instruction is required" }, { status: 400 });
+    if (!messages?.length) {
+      return NextResponse.json({ error: "Messages are required" }, { status: 400 });
     }
 
-    const updatedState = await updateSchedule(currentState, instruction);
-    return NextResponse.json(updatedState);
+    const { response, updatedState } = await chat(messages, currentState);
+    return NextResponse.json({ message: response.message, schedule: updatedState });
   } catch (err) {
     console.error("Schedule API error:", err);
-    return NextResponse.json({ error: "Failed to update schedule" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to process request" }, { status: 500 });
   }
 }

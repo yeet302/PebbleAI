@@ -24,6 +24,25 @@ export interface ScheduleState {
   goals: Goal[];
 }
 
+export interface Message {
+  role: "user" | "assistant";
+  content: string;
+}
+
+export interface ChatResponse {
+  message: string;
+  diff?: Partial<ScheduleDiff>;
+}
+
+export interface ScheduleDiff {
+  addEvents: CalendarEvent[];
+  updateEvents: CalendarEvent[];
+  removeEventIds: string[];
+  addGoals: Goal[];
+  updateGoals: Goal[];
+  removeGoalIds: string[];
+}
+
 export interface ClassEntry {
   name: string;
   days: string[];   // e.g. ["Mon", "Wed"]
