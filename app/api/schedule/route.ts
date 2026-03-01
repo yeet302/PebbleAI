@@ -13,8 +13,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Messages are required" }, { status: 400 });
     }
 
-    const { response, updatedState } = await chat(messages, currentState);
-    return NextResponse.json({ message: response.message, schedule: updatedState });
+    const { response, updatedState, changedEventIds } = await chat(messages, currentState);
+    return NextResponse.json({ message: response.message, schedule: updatedState, changedEventIds });
   } catch (err) {
     console.error("Schedule API error:", err);
     return NextResponse.json({ error: "Failed to process request" }, { status: 500 });

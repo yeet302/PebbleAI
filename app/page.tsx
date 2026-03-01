@@ -6,6 +6,7 @@ import Calendar from "@/components/Calendar";
 import GoalList from "@/components/GoalList";
 import Chat from "@/components/Chat";
 import Onboarding from "@/components/Onboarding";
+import WeeklyReview from "@/components/WeeklyReview";
 
 const SCHEDULE_KEY = "goalkeeper-schedule";
 const PROFILE_KEY = "goalkeeper-profile";
@@ -18,6 +19,8 @@ export default function HomePage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showReview, setShowReview] = useState(false);
+  const [highlightedEventIds, setHighlightedEventIds] = useState<string[]>([]);
 
   useEffect(() => {
     const s = localStorage.getItem(SCHEDULE_KEY);
@@ -50,10 +53,11 @@ export default function HomePage() {
         body: JSON.stringify({ messages: nextMessages, currentState: schedule }),
       });
       if (!res.ok) throw new Error("Failed to reach AI");
-      const data: { message: string; schedule: ScheduleState } = await res.json();
+      const data: { message: string; schedule: ScheduleState; changedEventIds: string[] } = await res.json();
 
       setMessages((prev) => [...prev, { role: "assistant", content: data.message }]);
       setSchedule(data.schedule);
+      if (data.changedEventIds?.length) setHighlightedEventIds(data.changedEventIds);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -88,12 +92,25 @@ export default function HomePage() {
   return (
     <div className="h-screen overflow-hidden flex flex-col">
       {!profile && !loading && <Onboarding onComplete={handleOnboardingComplete} />}
+      {showReview && (
+        <WeeklyReview
+          events={schedule.events}
+          onSubmit={(msg) => { sendMessage(msg); }}
+          onClose={() => setShowReview(false)}
+        />
+      )}
 
       {/* Header */}
       <header className="border-b bg-white px-6 py-4 flex items-center justify-between shadow-sm flex-shrink-0">
-        <h1 className="text-xl font-bold text-blue-600">GoalkeeperAI</h1>
+        <h1 className="text-xl font-bold text-blue-600">GoalKeeper</h1>
         <div className="flex items-center gap-4">
           {profile && <span className="text-sm text-gray-500">Hey, {profile.name} 👋</span>}
+          <button
+            onClick={() => setShowReview(true)}
+            className="text-xs text-gray-500 border border-gray-200 rounded-lg px-3 py-1.5 hover:border-blue-300 hover:text-blue-600 transition-colors"
+          >
+            Review Week
+          </button>
           <button onClick={handleClear} className="text-xs text-gray-400 hover:text-red-500">Reset</button>
         </div>
       </header>
@@ -111,7 +128,11 @@ export default function HomePage() {
 
         {/* Calendar */}
         <main className="flex-1 overflow-hidden p-4">
-          <Calendar events={schedule.events} />
+          <Calendar
+            events={schedule.events}
+            highlightedEventIds={highlightedEventIds}
+            onHighlightDone={() => setHighlightedEventIds([])}
+          />
         </main>
 
         {/* Chat panel */}

@@ -1,20 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CalendarEvent } from "@/types";
 
 interface CalendarProps {
   events: CalendarEvent[];
+  highlightedEventIds?: string[];
+  onHighlightDone?: () => void;
 }
 
-const HOUR_HEIGHT = 64;   // px per hour
-const START_HOUR = 6;     // 6am
-const END_HOUR = 23;      // 11pm
-const TOTAL_HOURS = END_HOUR - START_HOUR;
-const EVENT_INSET = 4;    // px gap between event and column edge
-const SLOT_GAP = 3;       // px gap between overlapping events
+type View = "week" | "month" | "year";
 
+// ── constants ────────────────────────────────────────────────────────────────
+const HOUR_HEIGHT = 64;
+const START_HOUR = 6;
+const END_HOUR = 23;
+const TOTAL_HOURS = END_HOUR - START_HOUR;
+const HOURS = Array.from({ length: TOTAL_HOURS }, (_, i) => START_HOUR + i);
 const DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 const categoryColors: Record<string, string> = {
   class:    "bg-blue-400 text-white border-blue-500",
@@ -25,19 +29,38 @@ const categoryColors: Record<string, string> = {
   personal: "bg-gray-400 text-white border-gray-500",
 };
 
-function getWeekDays(weekOffset: number): string[] {
-  const today = new Date();
-  const monday = new Date(today);
-  monday.setDate(today.getDate() - ((today.getDay() + 6) % 7) + weekOffset * 7);
+const categoryDotColors: Record<string, string> = {
+  class: "bg-blue-400", study: "bg-yellow-400", gym: "bg-green-400",
+  work: "bg-orange-400", goal: "bg-purple-400", personal: "bg-gray-400",
+};
+
+// ── helpers ──────────────────────────────────────────────────────────────────
+function toISO(d: Date) { return d.toISOString().split("T")[0]; }
+
+function getWeekDays(base: Date): string[] {
+  const monday = new Date(base);
+  monday.setDate(base.getDate() - ((base.getDay() + 6) % 7));
   return Array.from({ length: 7 }, (_, i) => {
     const d = new Date(monday);
     d.setDate(monday.getDate() + i);
-    return d.toISOString().split("T")[0];
+    return toISO(d);
   });
 }
 
-function timeToMinutes(time: string): number {
-  const [h, m] = time.split(":").map(Number);
+function getMonthGrid(year: number, month: number): (string | null)[] {
+  const first = new Date(year, month, 1);
+  const last = new Date(year, month + 1, 0);
+  const startPad = (first.getDay() + 6) % 7; // Mon=0
+  const cells: (string | null)[] = Array(startPad).fill(null);
+  for (let d = 1; d <= last.getDate(); d++) {
+    cells.push(toISO(new Date(year, month, d)));
+  }
+  while (cells.length % 7 !== 0) cells.push(null);
+  return cells;
+}
+
+function timeToMinutes(t: string) {
+  const [h, m] = t.split(":").map(Number);
   return h * 60 + m;
 }
 
@@ -49,143 +72,286 @@ function getEventStyle(startTime: string, endTime: string) {
   return { top, height };
 }
 
-// Simple overlap layout: assign column slots to overlapping events
 function layoutEvents(events: CalendarEvent[]) {
   const sorted = [...events].sort((a, b) => a.startTime.localeCompare(b.startTime));
   const slots: CalendarEvent[][] = [];
-
   for (const event of sorted) {
     let placed = false;
     for (const slot of slots) {
-      const last = slot[slot.length - 1];
-      if (last.endTime <= event.startTime) {
-        slot.push(event);
-        placed = true;
-        break;
+      if (slot[slot.length - 1].endTime <= event.startTime) {
+        slot.push(event); placed = true; break;
       }
     }
     if (!placed) slots.push([event]);
   }
-
   const totalSlots = slots.length || 1;
-  return sorted.map((event) => {
-    const slotIndex = slots.findIndex((s) => s.includes(event));
-    return { event, slotIndex, totalSlots };
-  });
+  return sorted.map((event) => ({
+    event,
+    slotIndex: slots.findIndex((s) => s.includes(event)),
+    totalSlots,
+  }));
 }
 
-const HOURS = Array.from({ length: TOTAL_HOURS }, (_, i) => START_HOUR + i);
-
-export default function Calendar({ events }: CalendarProps) {
-  const [weekOffset, setWeekOffset] = useState(0);
-  const weekDays = getWeekDays(weekOffset);
-  const today = new Date().toISOString().split("T")[0];
-
-  const label =
-    weekOffset === 0 ? "This Week" :
-    weekOffset === 1 ? "Next Week" :
-    weekOffset === -1 ? "Last Week" :
-    `${weekDays[0].slice(5)} – ${weekDays[6].slice(5)}`;
-
+// ── sub-views ────────────────────────────────────────────────────────────────
+function WeekView({ days, events, today, highlights }: { days: string[]; events: CalendarEvent[]; today: string; highlights: Set<string> }) {
   return (
-    <div className="flex flex-col h-full">
-      {/* Week navigation */}
-      <div className="flex items-center gap-3 mb-3 flex-shrink-0">
-        <button onClick={() => setWeekOffset((w) => w - 1)}
-          className="rounded px-2 py-1 text-sm text-gray-500 hover:bg-gray-100">
-          ← Prev
-        </button>
-        <span className="text-sm font-semibold text-gray-700 w-32 text-center">{label}</span>
-        <button onClick={() => setWeekOffset((w) => w + 1)}
-          className="rounded px-2 py-1 text-sm text-gray-500 hover:bg-gray-100">
-          Next →
-        </button>
-        {weekOffset !== 0 && (
-          <button onClick={() => setWeekOffset(0)}
-            className="rounded px-2 py-1 text-xs text-blue-500 hover:bg-blue-50">
-            Today
-          </button>
-        )}
+    <div className="flex flex-col flex-1 overflow-hidden border border-gray-200 rounded-xl">
+      {/* Day headers */}
+      <div className="flex flex-shrink-0 border-b border-gray-200 bg-white">
+        <div className="w-14 flex-shrink-0" />
+        {DAY_NAMES.map((name, i) => {
+          const isToday = days[i] === today;
+          return (
+            <div key={name} className="flex-1 text-center py-3 text-xs font-semibold text-gray-500 border-l border-gray-100">
+              <div>{name}</div>
+              <div className={`text-base font-bold mt-0.5 w-8 h-8 flex items-center justify-center rounded-full mx-auto
+                ${isToday ? "bg-blue-500 text-white" : "text-gray-700"}`}>
+                {days[i].slice(8)}
+              </div>
+            </div>
+          );
+        })}
       </div>
-
-      {/* Calendar grid */}
-      <div className="flex flex-col flex-1 overflow-hidden border border-gray-200 rounded-xl">
-        {/* Day headers — sticky */}
-        <div className="flex flex-shrink-0 border-b border-gray-200 bg-white">
-          <div className="w-14 flex-shrink-0" /> {/* spacer for time axis */}
-          {DAY_NAMES.map((name, i) => {
-            const isToday = weekDays[i] === today;
+      {/* Scrollable grid */}
+      <div className="flex flex-1 overflow-y-auto">
+        <div className="w-14 flex-shrink-0 relative bg-white" style={{ height: TOTAL_HOURS * HOUR_HEIGHT }}>
+          {HOURS.map((h) => (
+            <div key={h} className="absolute right-2 text-xs text-gray-400" style={{ top: (h - START_HOUR) * HOUR_HEIGHT - 8 }}>
+              {h === 12 ? "12pm" : h > 12 ? `${h - 12}pm` : `${h}am`}
+            </div>
+          ))}
+        </div>
+        <div className="flex flex-1">
+          {days.map((date) => {
+            const dayEvents = events.filter((e) => e.date === date);
+            const laid = layoutEvents(dayEvents);
             return (
-              <div key={name} className="flex-1 text-center py-3 text-xs font-semibold text-gray-500 border-l border-gray-100">
-                <div>{name}</div>
-                <div className={`text-base font-bold mt-0.5 w-8 h-8 flex items-center justify-center rounded-full mx-auto
-                  ${isToday ? "bg-blue-500 text-white" : "text-gray-700"}`}>
-                  {weekDays[i].slice(8)}
-                </div>
+              <div key={date} className="flex-1 border-l border-gray-100 relative" style={{ height: TOTAL_HOURS * HOUR_HEIGHT }}>
+                {HOURS.map((h) => (
+                  <div key={h} className="absolute w-full border-t border-gray-100" style={{ top: (h - START_HOUR) * HOUR_HEIGHT }} />
+                ))}
+                {HOURS.map((h) => (
+                  <div key={`${h}h`} className="absolute w-full border-t border-gray-50" style={{ top: (h - START_HOUR) * HOUR_HEIGHT + HOUR_HEIGHT / 2 }} />
+                ))}
+                {laid.map(({ event, slotIndex, totalSlots }) => {
+                  const { top, height } = getEventStyle(event.startTime, event.endTime);
+                  const colors = categoryColors[event.category] ?? categoryColors.personal;
+                  return (
+                    <div
+                      key={event.id}
+                      className={`absolute rounded-lg border-l-4 px-2 py-1 text-xs overflow-hidden cursor-pointer shadow-sm transition-shadow ${colors} ${highlights.has(event.id) ? "ring-2 ring-white ring-offset-1 animate-pulse shadow-lg" : ""}`}
+                      style={{
+                        top, height,
+                        left: `calc(${(slotIndex / totalSlots) * 100}% + 4px)`,
+                        right: `calc(${((totalSlots - slotIndex - 1) / totalSlots) * 100}% + 4px)`,
+                      }}
+                      title={`${event.title}\n${event.startTime}–${event.endTime}`}
+                    >
+                      <p className="font-semibold truncate leading-tight">{event.title}</p>
+                      {height >= 32 && <p className="opacity-80 truncate">{event.startTime}–{event.endTime}</p>}
+                    </div>
+                  );
+                })}
               </div>
             );
           })}
         </div>
+      </div>
+    </div>
+  );
+}
 
-        {/* Scrollable time grid */}
-        <div className="flex flex-1 overflow-y-auto">
-          {/* Time axis */}
-          <div className="w-14 flex-shrink-0 relative bg-white" style={{ height: TOTAL_HOURS * HOUR_HEIGHT }}>
-            {HOURS.map((h) => (
-              <div key={h} className="absolute right-2 text-xs text-gray-400"
-                style={{ top: (h - START_HOUR) * HOUR_HEIGHT - 8 }}>
-                {h === 12 ? "12pm" : h > 12 ? `${h - 12}pm` : `${h}am`}
+function MonthView({ year, month, events, today, onDayClick }: {
+  year: number; month: number; events: CalendarEvent[]; today: string;
+  onDayClick: (date: string) => void;
+}) {
+  const grid = getMonthGrid(year, month);
+  const eventsByDate: Record<string, CalendarEvent[]> = {};
+  for (const e of events) {
+    if (!eventsByDate[e.date]) eventsByDate[e.date] = [];
+    eventsByDate[e.date].push(e);
+  }
+
+  return (
+    <div className="flex flex-col flex-1 overflow-hidden border border-gray-200 rounded-xl">
+      {/* Day headers */}
+      <div className="grid grid-cols-7 border-b border-gray-200 bg-white flex-shrink-0">
+        {DAY_NAMES.map((d) => (
+          <div key={d} className="text-center py-2 text-xs font-semibold text-gray-400">{d}</div>
+        ))}
+      </div>
+      {/* Grid */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="grid grid-cols-7 divide-x divide-y divide-gray-100 h-full" style={{ gridAutoRows: "minmax(80px, 1fr)" }}>
+          {grid.map((date, i) => {
+            const dayEvents = date ? (eventsByDate[date] ?? []) : [];
+            const isToday = date === today;
+            return (
+              <div
+                key={i}
+                onClick={() => date && onDayClick(date)}
+                className={`p-1.5 cursor-pointer hover:bg-gray-50 transition-colors ${!date ? "bg-gray-50" : ""}`}
+              >
+                {date && (
+                  <>
+                    <div className={`text-xs font-semibold w-6 h-6 flex items-center justify-center rounded-full mb-1
+                      ${isToday ? "bg-blue-500 text-white" : "text-gray-600"}`}>
+                      {date.slice(8)}
+                    </div>
+                    <div className="space-y-0.5">
+                      {dayEvents.slice(0, 3).map((e) => (
+                        <div key={e.id}
+                          className={`text-xs truncate rounded px-1 ${categoryColors[e.category] ?? categoryColors.personal}`}
+                          title={`${e.title} ${e.startTime}–${e.endTime}`}>
+                          {e.title}
+                        </div>
+                      ))}
+                      {dayEvents.length > 3 && (
+                        <div className="text-xs text-gray-400 pl-1">+{dayEvents.length - 3} more</div>
+                      )}
+                    </div>
+                  </>
+                )}
               </div>
-            ))}
-          </div>
-
-          {/* Day columns */}
-          <div className="flex flex-1">
-            {weekDays.map((date, di) => {
-              const dayEvents = events.filter((e) => e.date === date);
-              const laid = layoutEvents(dayEvents);
-
-              return (
-                <div key={date} className="flex-1 border-l border-gray-100 relative"
-                  style={{ height: TOTAL_HOURS * HOUR_HEIGHT }}>
-                  {/* Hour lines */}
-                  {HOURS.map((h) => (
-                    <div key={h} className="absolute w-full border-t border-gray-100"
-                      style={{ top: (h - START_HOUR) * HOUR_HEIGHT }} />
-                  ))}
-                  {/* Half-hour lines */}
-                  {HOURS.map((h) => (
-                    <div key={`${h}h`} className="absolute w-full border-t border-gray-50"
-                      style={{ top: (h - START_HOUR) * HOUR_HEIGHT + HOUR_HEIGHT / 2 }} />
-                  ))}
-
-                  {/* Events */}
-                  {laid.map(({ event, slotIndex, totalSlots }) => {
-                    const { top, height } = getEventStyle(event.startTime, event.endTime);
-                    const left = `calc(${(slotIndex / totalSlots) * 100}% + ${EVENT_INSET}px)`;
-                    const right = `calc(${((totalSlots - slotIndex - 1) / totalSlots) * 100}% + ${EVENT_INSET}px)`;
-                    const colors = categoryColors[event.category] ?? categoryColors.personal;
-
-                    return (
-                      <div
-                        key={event.id}
-                        className={`absolute rounded-lg border-l-4 px-2 py-1 text-xs overflow-hidden cursor-pointer shadow-sm ${colors}`}
-                        style={{ top, height, left, right }}
-                        title={`${event.title}\n${event.startTime}–${event.endTime}${event.description ? `\n${event.description}` : ""}`}
-                      >
-                        <p className="font-semibold truncate leading-tight">{event.title}</p>
-                        {height >= 32 && (
-                          <p className="opacity-80 truncate">{event.startTime}–{event.endTime}</p>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              );
-            })}
-          </div>
+            );
+          })}
         </div>
       </div>
+    </div>
+  );
+}
+
+function YearView({ year, events, onMonthClick }: {
+  year: number; events: CalendarEvent[]; onMonthClick: (month: number) => void;
+}) {
+  const today = toISO(new Date());
+  const eventDates = new Set(events.map((e) => e.date));
+
+  return (
+    <div className="flex-1 overflow-y-auto">
+      <div className="grid grid-cols-4 gap-4 p-2">
+        {Array.from({ length: 12 }, (_, month) => {
+          const grid = getMonthGrid(year, month);
+          return (
+            <div
+              key={month}
+              onClick={() => onMonthClick(month)}
+              className="border border-gray-200 rounded-xl p-3 cursor-pointer hover:border-blue-300 hover:shadow-sm transition-all"
+            >
+              <p className="text-xs font-semibold text-gray-600 mb-2">{MONTH_NAMES[month]}</p>
+              <div className="grid grid-cols-7 gap-px">
+                {DAY_NAMES.map((d) => (
+                  <div key={d} className="text-center text-gray-300 font-medium" style={{ fontSize: 8 }}>{d[0]}</div>
+                ))}
+                {grid.map((date, i) => {
+                  const hasEvent = date ? eventDates.has(date) : false;
+                  const isToday = date === today;
+                  return (
+                    <div key={i} className="flex items-center justify-center" style={{ height: 14 }}>
+                      {date && (
+                        <div className={`rounded-full flex items-center justify-center
+                          ${isToday ? "bg-blue-500 text-white" : hasEvent ? "bg-blue-100" : ""}
+                        `} style={{ width: 14, height: 14, fontSize: 8 }}>
+                          {hasEvent && !isToday && (
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 block" />
+                          )}
+                          {isToday && <span style={{ fontSize: 7 }}>{date.slice(8)}</span>}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ── main component ───────────────────────────────────────────────────────────
+export default function Calendar({ events, highlightedEventIds, onHighlightDone }: CalendarProps) {
+  const [view, setView] = useState<View>("week");
+  const [current, setCurrent] = useState(new Date());
+  const [highlights, setHighlights] = useState<Set<string>>(new Set());
+  const today = toISO(new Date());
+
+  useEffect(() => {
+    if (!highlightedEventIds?.length) return;
+
+    // Navigate to the earliest changed event
+    const changed = events
+      .filter((e) => highlightedEventIds.includes(e.id))
+      .sort((a, b) => a.date.localeCompare(b.date));
+
+    if (changed.length) {
+      setCurrent(new Date(changed[0].date + "T00:00:00"));
+      setView("week");
+    }
+
+    setHighlights(new Set(highlightedEventIds));
+    const timer = setTimeout(() => {
+      setHighlights(new Set());
+      onHighlightDone?.();
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [highlightedEventIds]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const weekDays = getWeekDays(current);
+  const year = current.getFullYear();
+  const month = current.getMonth();
+
+  const navigate = (dir: 1 | -1) => {
+    const d = new Date(current);
+    if (view === "week") d.setDate(d.getDate() + dir * 7);
+    else if (view === "month") d.setMonth(d.getMonth() + dir);
+    else d.setFullYear(d.getFullYear() + dir);
+    setCurrent(d);
+  };
+
+  const label =
+    view === "week" ? `${weekDays[0].slice(5)} – ${weekDays[6].slice(5)}` :
+    view === "month" ? `${MONTH_NAMES[month]} ${year}` :
+    `${year}`;
+
+  const goToDay = (date: string) => {
+    setCurrent(new Date(date + "T00:00:00"));
+    setView("week");
+  };
+
+  const goToMonth = (m: number) => {
+    const d = new Date(current);
+    d.setMonth(m);
+    setCurrent(d);
+    setView("month");
+  };
+
+  return (
+    <div className="flex flex-col h-full">
+      {/* Toolbar */}
+      <div className="flex items-center gap-3 mb-3 flex-shrink-0">
+        <button onClick={() => navigate(-1)} className="rounded px-2 py-1 text-sm text-gray-500 hover:bg-gray-100">← Prev</button>
+        <span className="text-sm font-semibold text-gray-700 w-36 text-center">{label}</span>
+        <button onClick={() => navigate(1)} className="rounded px-2 py-1 text-sm text-gray-500 hover:bg-gray-100">Next →</button>
+        <button onClick={() => { setCurrent(new Date()); }} className="rounded px-2 py-1 text-xs text-blue-500 hover:bg-blue-50">Today</button>
+
+        <div className="ml-auto flex rounded-lg border border-gray-200 overflow-hidden text-xs">
+          {(["week", "month", "year"] as View[]).map((v) => (
+            <button
+              key={v}
+              onClick={() => setView(v)}
+              className={`px-3 py-1.5 capitalize transition-colors ${view === v ? "bg-blue-600 text-white" : "text-gray-500 hover:bg-gray-50"}`}
+            >
+              {v}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {view === "week" && <WeekView days={weekDays} events={events} today={today} highlights={highlights} />}
+      {view === "month" && <MonthView year={year} month={month} events={events} today={today} onDayClick={goToDay} />}
+      {view === "year" && <YearView year={year} events={events} onMonthClick={goToMonth} />}
     </div>
   );
 }
