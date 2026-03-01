@@ -7,6 +7,7 @@ import GoalList from "@/components/GoalList";
 import Chat from "@/components/Chat";
 import Landing from "@/components/Landing";
 import WeeklyReview from "@/components/WeeklyReview";
+import ScoreCard from "@/components/ScoreCard";
 
 const SCHEDULE_KEY = "pebble-schedule";
 const MESSAGES_KEY = "pebble-messages";
@@ -25,6 +26,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showReview, setShowReview] = useState(false);
+  const [showScore, setShowScore] = useState(false);
   const [highlightedEventIds, setHighlightedEventIds] = useState<string[]>([]);
   const [gcConnected, setGcConnected] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -248,6 +250,9 @@ export default function HomePage() {
   return (
     <div className="h-screen overflow-hidden flex flex-col">
       {!started && <Landing onImport={(events) => begin(events)} onSkip={() => begin()} />}
+      {showScore && (
+        <ScoreCard schedule={schedule} profile={profile} onClose={() => setShowScore(false)} />
+      )}
       {showReview && (
         <WeeklyReview
           events={schedule.events}
@@ -288,6 +293,14 @@ export default function HomePage() {
               className="text-xs text-gray-500 border border-gray-200 rounded-lg px-3 py-1.5 hover:border-blue-300 hover:text-blue-600 transition-colors"
             >
               Edit Preferences
+            </button>
+          )}
+          {started && (
+            <button
+              onClick={() => setShowScore(true)}
+              className="text-xs text-gray-500 border border-gray-200 rounded-lg px-3 py-1.5 hover:border-blue-300 hover:text-blue-600 transition-colors"
+            >
+              Score Week
             </button>
           )}
           <button

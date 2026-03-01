@@ -38,6 +38,19 @@ export interface ChatResponse {
   diff?: Partial<ScheduleDiff>;
 }
 
+export interface ScoreCategory {
+  name: string;
+  score: number;     // 0–100
+  insight: string;   // 1–2 sentence analysis
+  tip: string;       // 1-line actionable tip
+}
+
+export interface WeekScore {
+  overall: number;
+  summary: string;
+  categories: ScoreCategory[];
+}
+
 export interface UserProfile {
   name: string;
   wakeTime: string;                    // "HH:MM"

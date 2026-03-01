@@ -198,7 +198,7 @@ function applyDiff(
   return { state: { events, goals }, changedEventIds, setProfile };
 }
 
-function parseJSON(raw: string): unknown {
+export function parseJSON(raw: string): unknown {
   // Strip markdown fences if present
   const stripped = raw.trim().replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
   // Extract the first complete JSON object (handles trailing text from the model)
