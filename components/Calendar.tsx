@@ -596,6 +596,42 @@ export default function Calendar({ events, onTitleChange, onEventCompletionChang
     };
   }, [events, referenceDate]);
 
+  const daySummary = useMemo(() => {
+    const isoDate = toIsoDate(referenceDate);
+    const dayEvents = events.filter((event) => event.date === isoDate);
+    const completed = dayEvents.filter((event) => event.completionStatus === "completed").length;
+    const notCompleted = dayEvents.filter((event) => event.completionStatus === "not-completed").length;
+    const pending = dayEvents.length - completed - notCompleted;
+    const completionRate = dayEvents.length > 0 ? Math.round((completed / dayEvents.length) * 100) : 0;
+    return {
+      total: dayEvents.length,
+      completed,
+      notCompleted,
+      pending,
+      completionRate,
+    };
+  }, [events, referenceDate]);
+
+  const monthSummary = useMemo(() => {
+    const year = referenceDate.getFullYear();
+    const month = referenceDate.getMonth();
+    const monthEvents = events.filter((event) => {
+      const d = fromIsoDateLocal(event.date);
+      return d.getFullYear() === year && d.getMonth() === month;
+    });
+    const completed = monthEvents.filter((event) => event.completionStatus === "completed").length;
+    const notCompleted = monthEvents.filter((event) => event.completionStatus === "not-completed").length;
+    const pending = monthEvents.length - completed - notCompleted;
+    const completionRate = monthEvents.length > 0 ? Math.round((completed / monthEvents.length) * 100) : 0;
+    return {
+      total: monthEvents.length,
+      completed,
+      notCompleted,
+      pending,
+      completionRate,
+    };
+  }, [events, referenceDate]);
+
   useEffect(() => {
     onTitleChange?.(title);
   }, [title, onTitleChange]);
@@ -654,6 +690,11 @@ export default function Calendar({ events, onTitleChange, onEventCompletionChang
     setShowDatePicker(true);
   };
 
+  const handleCompletionClick = (eventId: string, status: EventCompletionStatus) => {
+    onEventCompletionChange?.(eventId, status);
+    setSelectedEventId(null);
+  };
+
   const applyKeywordSearch = (keyword: string) => {
     const trimmed = keyword.trim();
     if (!trimmed) return;
@@ -678,6 +719,11 @@ export default function Calendar({ events, onTitleChange, onEventCompletionChang
 
     return (
       <div className="rounded-lg border bg-white p-4 dark:bg-slate-900 dark:border-slate-700">
+        <div className="mb-3 rounded-lg border border-gray-200 bg-white p-2 text-xs text-gray-700 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-200">
+          <span className="font-semibold">Daily Summary:</span>{" "}
+          {daySummary.completed} completed, {daySummary.notCompleted} not completed, {daySummary.pending} pending
+          {" "}({daySummary.completionRate}% completion, {daySummary.total} total)
+        </div>
         {dayEvents.length === 0 && <p className="mb-3 text-sm text-gray-400 dark:text-slate-400">No events for this day.</p>}
         <div className="mb-2 flex justify-end">
           <button
@@ -741,15 +787,17 @@ export default function Calendar({ events, onTitleChange, onEventCompletionChang
                   zIndex: 30,
                 }}
               >
-                <p className="font-bold truncate leading-tight" style={{ fontSize: `${titleSizePx}px` }}>
-                  {event.title}
-                </p>
-                <p
-                  className="truncate font-semibold text-gray-700 dark:text-slate-300 leading-tight"
-                  style={{ fontSize: `${timeSizePx}px` }}
-                >
-                  {getEventTimeRange(event)}
-                </p>
+                <div className="flex items-baseline justify-between gap-2">
+                  <p className="min-w-0 flex-1 font-bold truncate leading-tight" style={{ fontSize: `${titleSizePx}px` }}>
+                    {event.title}
+                  </p>
+                  <p
+                    className="shrink-0 font-semibold text-gray-700 dark:text-slate-300 leading-tight"
+                    style={{ fontSize: `${timeSizePx}px` }}
+                  >
+                    {getEventTimeRange(event)}
+                  </p>
+                </div>
                 {event.description && (
                   <p
                     className="mt-1 text-gray-600 dark:text-slate-300 line-clamp-2 break-words leading-tight"
@@ -933,51 +981,58 @@ export default function Calendar({ events, onTitleChange, onEventCompletionChang
     const monthGrid = getMonthGrid(referenceDate);
     const activeMonth = referenceDate.getMonth();
     return (
-      <div className="grid grid-cols-7 gap-2 text-sm">
-        {DAY_NAMES.map((name) => (
-          <div key={name} className="text-center font-semibold text-gray-600 pb-1 dark:text-slate-200">
-            {name}
-          </div>
-        ))}
-        {monthGrid.map((date) => {
-          const isoDate = toIsoDate(date);
-          const dayEvents = eventsByDate.get(isoDate) ?? [];
-          const inCurrentMonth = date.getMonth() === activeMonth;
-          return (
-            <div
-              key={isoDate}
-              onClick={() => openDay(date)}
-              className={`min-h-28 rounded-lg border p-1.5 space-y-1 ${
-                inCurrentMonth
-                  ? "bg-white border-gray-200 dark:bg-slate-900 dark:border-slate-700"
-                  : "bg-gray-50 border-gray-100 dark:bg-slate-950 dark:border-slate-800"
-              } cursor-pointer hover:border-blue-300`}
-              title="Open day view"
-            >
-              <p
-                className={`text-right text-sm font-medium ${
-                  inCurrentMonth ? "text-gray-700 dark:text-slate-200" : "text-gray-400 dark:text-slate-500"
-                }`}
-              >
-                {date.getDate()}
-              </p>
-              {dayEvents.slice(0, 5).map((event) => (
-                <EventCard
-                  key={event.id}
-                  event={event}
-                  compact
-                  summaryOnly
-                  showTime={dayEvents.length <= 1}
-                  compactVariant="month"
-                  onClick={() => setSelectedEventId(event.id)}
-                />
-              ))}
-              {dayEvents.length > 5 && (
-                <p className="text-[11px] text-gray-500 dark:text-slate-400">+{dayEvents.length - 5} more</p>
-              )}
+      <div className="space-y-2">
+        <div className="rounded-lg border border-gray-200 bg-white p-2 text-xs text-gray-700 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-200">
+          <span className="font-semibold">Monthly Summary:</span>{" "}
+          {monthSummary.completed} completed, {monthSummary.notCompleted} not completed, {monthSummary.pending} pending
+          {" "}({monthSummary.completionRate}% completion, {monthSummary.total} total)
+        </div>
+        <div className="grid grid-cols-7 gap-2 text-sm">
+          {DAY_NAMES.map((name) => (
+            <div key={name} className="text-center font-semibold text-gray-600 pb-1 dark:text-slate-200">
+              {name}
             </div>
-          );
-        })}
+          ))}
+          {monthGrid.map((date) => {
+            const isoDate = toIsoDate(date);
+            const dayEvents = eventsByDate.get(isoDate) ?? [];
+            const inCurrentMonth = date.getMonth() === activeMonth;
+            return (
+              <div
+                key={isoDate}
+                onClick={() => openDay(date)}
+                className={`min-h-28 rounded-lg border p-1.5 space-y-1 ${
+                  inCurrentMonth
+                    ? "bg-white border-gray-200 dark:bg-slate-900 dark:border-slate-700"
+                    : "bg-gray-50 border-gray-100 dark:bg-slate-950 dark:border-slate-800"
+                } cursor-pointer hover:border-blue-300`}
+                title="Open day view"
+              >
+                <p
+                  className={`text-right text-sm font-medium ${
+                    inCurrentMonth ? "text-gray-700 dark:text-slate-200" : "text-gray-400 dark:text-slate-500"
+                  }`}
+                >
+                  {date.getDate()}
+                </p>
+                {dayEvents.slice(0, 5).map((event) => (
+                  <EventCard
+                    key={event.id}
+                    event={event}
+                    compact
+                    summaryOnly
+                    showTime={dayEvents.length <= 1}
+                    compactVariant="month"
+                    onClick={() => setSelectedEventId(event.id)}
+                  />
+                ))}
+                {dayEvents.length > 5 && (
+                  <p className="text-[11px] text-gray-500 dark:text-slate-400">+{dayEvents.length - 5} more</p>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   };
@@ -1131,7 +1186,7 @@ export default function Calendar({ events, onTitleChange, onEventCompletionChang
               <p className="mb-2 text-sm font-medium text-gray-700 dark:text-slate-200">Completion Status</p>
               <div className="flex flex-wrap gap-2">
                 <button
-                  onClick={() => onEventCompletionChange?.(selectedEvent.id, "completed")}
+                  onClick={() => handleCompletionClick(selectedEvent.id, "completed")}
                   className={`rounded px-3 py-1.5 text-sm ${
                     (selectedEvent.completionStatus ?? "pending") === "completed"
                       ? "bg-green-600 text-white"
@@ -1141,7 +1196,7 @@ export default function Calendar({ events, onTitleChange, onEventCompletionChang
                   Completed
                 </button>
                 <button
-                  onClick={() => onEventCompletionChange?.(selectedEvent.id, "not-completed")}
+                  onClick={() => handleCompletionClick(selectedEvent.id, "not-completed")}
                   className={`rounded px-3 py-1.5 text-sm ${
                     selectedEvent.completionStatus === "not-completed"
                       ? "bg-red-600 text-white"
@@ -1151,7 +1206,7 @@ export default function Calendar({ events, onTitleChange, onEventCompletionChang
                   Didn&apos;t Complete
                 </button>
                 <button
-                  onClick={() => onEventCompletionChange?.(selectedEvent.id, "pending")}
+                  onClick={() => handleCompletionClick(selectedEvent.id, "pending")}
                   className={`rounded px-3 py-1.5 text-sm ${
                     (selectedEvent.completionStatus ?? "pending") === "pending"
                       ? "bg-gray-700 text-white dark:bg-slate-500"

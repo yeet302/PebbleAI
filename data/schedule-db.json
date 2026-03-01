@@ -8,7 +8,8 @@
       "endTime": "13:15",
       "category": "gym",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "843af2b5-29f0-408e-8888-71309ed28b70@goalkeeperai.local",
@@ -18,7 +19,8 @@
       "endTime": "22:30",
       "category": "study",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "db464069-a698-4fe6-8a90-378208f82336@goalkeeperai.local",
@@ -28,7 +30,8 @@
       "endTime": "09:30",
       "category": "leisure",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "completed"
     },
     {
       "id": "e7d24aea-fd86-4e9e-8958-b3b42f2ffadd@goalkeeperai.local",
@@ -38,7 +41,8 @@
       "endTime": "22:15",
       "category": "study",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "64442edc-6ca2-458f-a2df-1cac0e21cf73@goalkeeperai.local",
@@ -48,7 +52,8 @@
       "endTime": "20:00",
       "category": "study",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "3f12711f-4707-47cb-8d1d-f8c40a701e5f@goalkeeperai.local",
@@ -58,7 +63,8 @@
       "endTime": "13:45",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "b6fdab3d-67c7-4fce-8926-5fe5eb475009@goalkeeperai.local",
@@ -68,7 +74,8 @@
       "endTime": "12:15",
       "category": "rest",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "d03e5597-380e-4989-8bf8-a81c516c4880@goalkeeperai.local",
@@ -78,7 +85,8 @@
       "endTime": "21:45",
       "category": "rest",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "58b1685b-442c-4550-a778-e79ef59837b2@goalkeeperai.local",
@@ -88,7 +96,8 @@
       "endTime": "20:30",
       "category": "work",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "336aee0b-83f7-4813-b525-010c3892f5c0@goalkeeperai.local",
@@ -98,7 +107,8 @@
       "endTime": "15:15",
       "category": "class",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "d65c0fd3-a802-4ea7-9064-0538c35051a4@goalkeeperai.local",
@@ -108,7 +118,8 @@
       "endTime": "09:00",
       "category": "class",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "58e1b562-8d66-4c4e-b731-0e6c9b34bd50@goalkeeperai.local",
@@ -118,7 +129,8 @@
       "endTime": "20:45",
       "category": "study",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "7ebe1ff3-0004-4727-961e-52ad73886eec@goalkeeperai.local",
@@ -128,7 +140,8 @@
       "endTime": "13:00",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "106dac46-d57d-42a7-b355-ec669e5284d9@goalkeeperai.local",
@@ -138,7 +151,8 @@
       "endTime": "18:00",
       "category": "personal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "71435f9b-cd7c-42ef-97e8-40fa33e7844e@goalkeeperai.local",
@@ -148,7 +162,8 @@
       "endTime": "17:15",
       "category": "personal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "47b80c2d-c9b0-4ed5-8032-d6a284ff2556@goalkeeperai.local",
@@ -158,7 +173,8 @@
       "endTime": "17:00",
       "category": "class",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "e2d35b8d-db25-4833-846e-07f97ccdd1b8@goalkeeperai.local",
@@ -168,7 +184,8 @@
       "endTime": "18:15",
       "category": "rest",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "8ef8c40c-731a-4151-93cc-4fd8c1db5bc1@goalkeeperai.local",
@@ -178,7 +195,8 @@
       "endTime": "09:15",
       "category": "leisure",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "8d0218e0-751a-47a8-92c0-4545e85bbed9@goalkeeperai.local",
@@ -188,7 +206,8 @@
       "endTime": "20:30",
       "category": "work",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "073d7aea-9abb-4368-8beb-191e0b45260d@goalkeeperai.local",
@@ -198,7 +217,8 @@
       "endTime": "08:30",
       "category": "leisure",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "2b0af4c9-69d7-40f9-a040-36721ef618e2@goalkeeperai.local",
@@ -208,7 +228,8 @@
       "endTime": "16:45",
       "category": "class",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "49c9bb2a-8c96-4f2b-a620-d7e8b2d0a52b@goalkeeperai.local",
@@ -218,7 +239,8 @@
       "endTime": "14:30",
       "category": "meal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "705013e6-4439-4f2c-a9c3-1194c787b4ef@goalkeeperai.local",
@@ -228,7 +250,8 @@
       "endTime": "13:30",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "1611e536-1fc7-4380-8849-f6837951856b@goalkeeperai.local",
@@ -238,7 +261,8 @@
       "endTime": "16:00",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "2cd6f402-bf8a-4106-b516-462b77dc8217@goalkeeperai.local",
@@ -248,7 +272,8 @@
       "endTime": "21:45",
       "category": "rest",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "6af22407-d664-41f6-b9de-2af7aa3aaa15@goalkeeperai.local",
@@ -258,7 +283,8 @@
       "endTime": "20:45",
       "category": "leisure",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "faf71ed7-22c6-4510-be96-045a61f73d14@goalkeeperai.local",
@@ -268,7 +294,8 @@
       "endTime": "12:30",
       "category": "personal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "052ff511-2c67-4acb-a3d0-192d03f7feb0@goalkeeperai.local",
@@ -278,7 +305,8 @@
       "endTime": "22:15",
       "category": "rest",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "541102e2-128a-4943-bc19-afbe0b31ab92@goalkeeperai.local",
@@ -288,7 +316,8 @@
       "endTime": "14:00",
       "category": "gym",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "273526e0-4e42-418b-8deb-4e2b0e7bfb8e@goalkeeperai.local",
@@ -298,7 +327,8 @@
       "endTime": "21:45",
       "category": "meal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "b729c105-1aac-4d8e-b5ef-d2341b329038@goalkeeperai.local",
@@ -308,7 +338,8 @@
       "endTime": "10:00",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "f16aa0e6-8697-4d6a-b475-4ec799618ece@goalkeeperai.local",
@@ -318,7 +349,8 @@
       "endTime": "19:15",
       "category": "work",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "7fccfd0b-420c-4199-9348-fcd3a919d9b1@goalkeeperai.local",
@@ -328,7 +360,8 @@
       "endTime": "18:30",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "38280bf3-d350-451b-b437-8f46cb8493c7@goalkeeperai.local",
@@ -338,7 +371,8 @@
       "endTime": "18:15",
       "category": "personal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "b38fccb8-83dc-402d-85a6-295996887339@goalkeeperai.local",
@@ -348,7 +382,8 @@
       "endTime": "15:45",
       "category": "personal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "c809778b-cf68-4d49-b67b-15ab45784a9a@goalkeeperai.local",
@@ -358,7 +393,8 @@
       "endTime": "20:30",
       "category": "gym",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "0ac20d2a-61b6-4de8-a8d7-8715dd71c736@goalkeeperai.local",
@@ -368,7 +404,8 @@
       "endTime": "09:45",
       "category": "study",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "a771e5be-d136-4d46-b8bc-907b395a606d@goalkeeperai.local",
@@ -378,7 +415,8 @@
       "endTime": "19:00",
       "category": "leisure",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "29783f7c-15d3-491a-8cbc-9e5a7e21a3f0@goalkeeperai.local",
@@ -388,7 +426,8 @@
       "endTime": "15:30",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "fed9b31f-0e40-4a8a-b3fd-eba90397e12e@goalkeeperai.local",
@@ -398,7 +437,8 @@
       "endTime": "20:15",
       "category": "leisure",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "d22b26b8-1f84-4e43-b0cd-113d3f1c82bf@goalkeeperai.local",
@@ -408,7 +448,8 @@
       "endTime": "23:00",
       "category": "study",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "ebe53e0b-bb34-4a5e-871a-1e042fec4254@goalkeeperai.local",
@@ -418,7 +459,8 @@
       "endTime": "11:15",
       "category": "meal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "f6bdbdb5-6ac9-4710-9f91-f638c1695276@goalkeeperai.local",
@@ -428,7 +470,8 @@
       "endTime": "08:30",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "4d38236a-b205-43bc-9101-a70f47019531@goalkeeperai.local",
@@ -438,7 +481,8 @@
       "endTime": "21:00",
       "category": "personal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "d5d49eb8-18d0-474d-b470-f03a8b528fb3@goalkeeperai.local",
@@ -448,7 +492,8 @@
       "endTime": "16:30",
       "category": "meal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "c8b1166e-b707-4207-8fca-20fffca91f04@goalkeeperai.local",
@@ -458,7 +503,8 @@
       "endTime": "14:00",
       "category": "work",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "088c1aa5-1ce9-4781-ab43-ae58886bb504@goalkeeperai.local",
@@ -468,7 +514,8 @@
       "endTime": "15:00",
       "category": "class",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "320d3dde-d4fb-462a-96ee-7800ad710f94@goalkeeperai.local",
@@ -478,7 +525,8 @@
       "endTime": "21:00",
       "category": "rest",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "2c4706c6-55fc-4a3a-9073-075242cb3716@goalkeeperai.local",
@@ -488,7 +536,8 @@
       "endTime": "22:00",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "939b4f58-b822-40fc-ac96-71297fe4c1a2@goalkeeperai.local",
@@ -498,7 +547,8 @@
       "endTime": "09:00",
       "category": "rest",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "8575e74d-e9dd-4bd5-8d52-6e00bc7518b8@goalkeeperai.local",
@@ -508,7 +558,8 @@
       "endTime": "19:00",
       "category": "meal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "a8ac8dbc-0c09-4a6c-b12b-6a19bea52827@goalkeeperai.local",
@@ -518,7 +569,8 @@
       "endTime": "11:30",
       "category": "personal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "ea3270fb-22b0-4214-b9fd-6b5dd4b5b396@goalkeeperai.local",
@@ -528,7 +580,8 @@
       "endTime": "14:45",
       "category": "personal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "b8ef3805-43ea-441e-8ef4-2e8c4d80393d@goalkeeperai.local",
@@ -538,7 +591,8 @@
       "endTime": "12:45",
       "category": "meal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "9a564ecd-509a-4d0f-bda7-7649690493ff@goalkeeperai.local",
@@ -548,7 +602,8 @@
       "endTime": "09:45",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "5b7a18ab-e176-47f5-af2d-4eca534e1418@goalkeeperai.local",
@@ -558,7 +613,8 @@
       "endTime": "18:15",
       "category": "leisure",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "76be54a9-88b0-4fe8-a093-614a46ec860f@goalkeeperai.local",
@@ -568,7 +624,8 @@
       "endTime": "22:15",
       "category": "meal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "64979023-bd6c-44bf-a7d1-7dc2220709a1@goalkeeperai.local",
@@ -578,7 +635,8 @@
       "endTime": "18:15",
       "category": "work",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "b18c7b39-5923-4fff-83ae-0e6e62f8145b@goalkeeperai.local",
@@ -588,7 +646,8 @@
       "endTime": "16:15",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "4872f034-d427-4972-b1b2-ece8daef9905@goalkeeperai.local",
@@ -598,7 +657,8 @@
       "endTime": "09:15",
       "category": "class",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "4954737b-999b-4653-90ff-24e22abffcfd@goalkeeperai.local",
@@ -608,7 +668,8 @@
       "endTime": "21:15",
       "category": "personal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "74e62e16-36fb-4c42-90b1-dc814712fdad@goalkeeperai.local",
@@ -618,7 +679,8 @@
       "endTime": "15:45",
       "category": "study",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "b414b2c4-1e4f-4f9b-9713-6d134eaf88a6@goalkeeperai.local",
@@ -628,7 +690,8 @@
       "endTime": "12:30",
       "category": "study",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "4e44452b-fb14-48ed-a180-92d7b4b2c69b@goalkeeperai.local",
@@ -638,7 +701,8 @@
       "endTime": "19:45",
       "category": "study",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "87d11d25-a8e6-4c58-8ac9-82ea61a7863d@goalkeeperai.local",
@@ -648,7 +712,8 @@
       "endTime": "13:15",
       "category": "personal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "6abc54b1-3dfc-433c-97af-c9aabe0ae1d3@goalkeeperai.local",
@@ -658,7 +723,8 @@
       "endTime": "13:45",
       "category": "rest",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "fd16a1b1-d322-45c2-a536-2ce53ae7030c@goalkeeperai.local",
@@ -668,7 +734,8 @@
       "endTime": "10:30",
       "category": "rest",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "b43fac46-989e-4a45-a438-66d95179affc@goalkeeperai.local",
@@ -678,7 +745,8 @@
       "endTime": "16:30",
       "category": "rest",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "7247b5ef-e7ac-43f3-aa67-ddb8bf5cae90@goalkeeperai.local",
@@ -688,7 +756,8 @@
       "endTime": "15:00",
       "category": "meal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "2347be2b-dcf7-4ce4-a9e5-352cc2fb2fdc@goalkeeperai.local",
@@ -698,7 +767,8 @@
       "endTime": "22:30",
       "category": "work",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "32f2ec21-7382-4e12-946e-6648b8bcf0f0@goalkeeperai.local",
@@ -708,7 +778,8 @@
       "endTime": "21:45",
       "category": "leisure",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "cc7d647d-0ea7-41c5-810d-1ed10021ca9b@goalkeeperai.local",
@@ -718,7 +789,8 @@
       "endTime": "09:45",
       "category": "work",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "4a0dbdec-e3c1-4c7c-922f-25596cf33818@goalkeeperai.local",
@@ -728,7 +800,8 @@
       "endTime": "08:15",
       "category": "rest",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "7b68e002-fd61-4954-be94-7347c4ff8e50@goalkeeperai.local",
@@ -738,7 +811,8 @@
       "endTime": "17:00",
       "category": "rest",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "cf7720ca-1359-46c4-86b1-2a1e8fbc9813@goalkeeperai.local",
@@ -748,7 +822,8 @@
       "endTime": "19:15",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "21913292-8c13-4f04-a6da-e732a3e7ec0c@goalkeeperai.local",
@@ -758,7 +833,8 @@
       "endTime": "19:30",
       "category": "gym",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "fcb9da5e-93b4-4122-8a03-ac38fbc58b35@goalkeeperai.local",
@@ -768,7 +844,8 @@
       "endTime": "12:45",
       "category": "class",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "ac1ebddc-2a2a-43b2-b2f3-6beb04707dc7@goalkeeperai.local",
@@ -778,7 +855,8 @@
       "endTime": "14:30",
       "category": "rest",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "9f13af76-f1fa-4d72-8138-e377cd3175dd@goalkeeperai.local",
@@ -788,7 +866,8 @@
       "endTime": "20:30",
       "category": "study",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "c8d1dde2-b630-4a61-8c92-f1227308e33e@goalkeeperai.local",
@@ -798,7 +877,8 @@
       "endTime": "13:30",
       "category": "gym",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "b3337ad1-2134-40e7-b8db-8d8faad702fb@goalkeeperai.local",
@@ -808,7 +888,8 @@
       "endTime": "11:00",
       "category": "gym",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "8b4726bc-e687-449b-8e4b-4e9982c031b4@goalkeeperai.local",
@@ -818,7 +899,8 @@
       "endTime": "13:30",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "1901f3e0-7e46-4547-9466-ee87665e2d2b@goalkeeperai.local",
@@ -828,7 +910,8 @@
       "endTime": "19:00",
       "category": "meal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "0a376a7a-4d09-45ff-a2c0-0eef19aea192@goalkeeperai.local",
@@ -838,7 +921,8 @@
       "endTime": "19:00",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "b87e02c5-5400-49dd-999a-04ce89bff307@goalkeeperai.local",
@@ -848,7 +932,8 @@
       "endTime": "15:00",
       "category": "work",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "4a2594d0-7539-4cd6-b475-1fb2f151fd20@goalkeeperai.local",
@@ -858,7 +943,8 @@
       "endTime": "11:00",
       "category": "personal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "c0dd4cb5-297e-43c4-a393-2b53e8f4eedb@goalkeeperai.local",
@@ -868,7 +954,8 @@
       "endTime": "16:15",
       "category": "rest",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "c652a46e-ab3a-4096-b97b-0dabb4cdd704@goalkeeperai.local",
@@ -878,7 +965,8 @@
       "endTime": "08:15",
       "category": "personal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "80cb7cdf-7449-430f-afa3-da238235bb2e@goalkeeperai.local",
@@ -888,7 +976,8 @@
       "endTime": "22:30",
       "category": "class",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "82047b73-2fa4-4354-95df-0a15206052e9@goalkeeperai.local",
@@ -898,7 +987,8 @@
       "endTime": "15:30",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "da621d9d-2591-4ae3-8387-d2187e9a1b89@goalkeeperai.local",
@@ -908,7 +998,8 @@
       "endTime": "14:00",
       "category": "leisure",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "5173dcd0-cbbb-4052-805d-91ebf145df14@goalkeeperai.local",
@@ -918,7 +1009,8 @@
       "endTime": "16:00",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "d2b88d87-5604-4ea0-9af0-54bc0dd32671@goalkeeperai.local",
@@ -928,7 +1020,8 @@
       "endTime": "12:45",
       "category": "leisure",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "f824330d-5906-4c1c-a33b-5c5df4a68a57@goalkeeperai.local",
@@ -938,7 +1031,8 @@
       "endTime": "08:45",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "0ec0ea20-3002-4162-9d46-ef04edb69d28@goalkeeperai.local",
@@ -948,7 +1042,8 @@
       "endTime": "21:30",
       "category": "class",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "528c99be-5045-4e16-904a-1548bdab8ffb@goalkeeperai.local",
@@ -958,7 +1053,8 @@
       "endTime": "20:15",
       "category": "rest",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "59a04e9e-bf33-417e-9748-b0964d2eb731@goalkeeperai.local",
@@ -968,7 +1064,8 @@
       "endTime": "10:30",
       "category": "study",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "a9862385-47fc-487c-893e-04d140f04893@goalkeeperai.local",
@@ -978,7 +1075,8 @@
       "endTime": "18:15",
       "category": "meal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "d628c1e8-a4d2-4549-baf3-659d780ebb57@goalkeeperai.local",
@@ -988,7 +1086,8 @@
       "endTime": "08:30",
       "category": "work",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "8840b84c-b0ad-4022-a156-631488e24935@goalkeeperai.local",
@@ -998,7 +1097,8 @@
       "endTime": "21:45",
       "category": "meal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "be65d0b5-e4be-493d-acfe-4eed808498b8@goalkeeperai.local",
@@ -1008,7 +1108,8 @@
       "endTime": "09:30",
       "category": "meal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "ee7eb3f0-3a70-4ae0-acc2-956322acbe35@goalkeeperai.local",
@@ -1018,7 +1119,8 @@
       "endTime": "14:45",
       "category": "study",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "7c261e1b-a2e6-4223-b445-f5d718defbd2@goalkeeperai.local",
@@ -1028,7 +1130,8 @@
       "endTime": "16:15",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "8416a08d-69c4-44c8-a43e-a5c85d54f4d8@goalkeeperai.local",
@@ -1038,7 +1141,8 @@
       "endTime": "18:15",
       "category": "personal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "394f1a96-1c37-43d8-91cd-aefce6f91c26@goalkeeperai.local",
@@ -1048,7 +1152,8 @@
       "endTime": "16:45",
       "category": "leisure",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "d32b988c-e3ea-4e15-86d2-9aeedfd1de02@goalkeeperai.local",
@@ -1058,7 +1163,8 @@
       "endTime": "13:45",
       "category": "personal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "3a7bef1e-6867-44e1-9b35-cf4fb5846d4a@goalkeeperai.local",
@@ -1068,7 +1174,8 @@
       "endTime": "08:15",
       "category": "meal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "89673dd9-3ff6-4f38-9bb9-458f11947b4f@goalkeeperai.local",
@@ -1078,7 +1185,8 @@
       "endTime": "21:00",
       "category": "leisure",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "a3953e4b-18be-4279-89ab-d8f6dccb463b@goalkeeperai.local",
@@ -1088,7 +1196,8 @@
       "endTime": "19:30",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "8af9ff05-4cae-4ed1-bcf6-69d5b90ba83d@goalkeeperai.local",
@@ -1098,7 +1207,8 @@
       "endTime": "20:15",
       "category": "work",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "4ee81195-aba5-44e4-a98f-dbd44b74a384@goalkeeperai.local",
@@ -1108,7 +1218,8 @@
       "endTime": "14:15",
       "category": "work",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "184e7429-feb6-49aa-88db-c577b21a6c13@goalkeeperai.local",
@@ -1118,7 +1229,8 @@
       "endTime": "14:45",
       "category": "class",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "91a84737-78f6-4daa-92a3-92e133fc49f1@goalkeeperai.local",
@@ -1128,7 +1240,8 @@
       "endTime": "10:00",
       "category": "rest",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "541d7233-4a47-41e2-b66e-547b90f8274c@goalkeeperai.local",
@@ -1138,7 +1251,8 @@
       "endTime": "10:30",
       "category": "leisure",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "11ea77ce-d383-4113-b60e-5095944923cd@goalkeeperai.local",
@@ -1148,7 +1262,8 @@
       "endTime": "12:15",
       "category": "gym",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "a988b48c-2c4a-4723-aee4-22d87a618a7a@goalkeeperai.local",
@@ -1158,7 +1273,8 @@
       "endTime": "13:00",
       "category": "rest",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "ca8a4a19-96c6-4369-a9c0-54a9a0bb67c6@goalkeeperai.local",
@@ -1168,7 +1284,8 @@
       "endTime": "22:15",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "0af1c3f4-3d0c-4365-abdc-eec7a6de75a7@goalkeeperai.local",
@@ -1178,7 +1295,8 @@
       "endTime": "13:00",
       "category": "gym",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "12baef27-6bb7-406c-8326-4c11ba917863@goalkeeperai.local",
@@ -1188,7 +1306,8 @@
       "endTime": "14:45",
       "category": "personal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "5eddf945-f73b-41e3-970d-579979a75198@goalkeeperai.local",
@@ -1198,7 +1317,8 @@
       "endTime": "15:45",
       "category": "work",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "82c90dfa-8834-4214-85b0-cb62a491e948@goalkeeperai.local",
@@ -1208,7 +1328,8 @@
       "endTime": "22:15",
       "category": "meal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "d52a1701-5a67-45c7-b960-346b47b99ffd@goalkeeperai.local",
@@ -1218,7 +1339,8 @@
       "endTime": "19:15",
       "category": "class",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "d7b02238-e8e1-4085-a077-d1ca05ca4e53@goalkeeperai.local",
@@ -1228,7 +1350,8 @@
       "endTime": "22:15",
       "category": "study",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "0a01c52b-50be-450b-aa36-b9d279464377@goalkeeperai.local",
@@ -1238,7 +1361,8 @@
       "endTime": "14:15",
       "category": "class",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "c8c853b7-c6b2-4c8e-852e-c75ed6a1e813@goalkeeperai.local",
@@ -1248,7 +1372,8 @@
       "endTime": "08:45",
       "category": "study",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "44f02ccc-be52-4d77-8a6b-837da30c3d4c@goalkeeperai.local",
@@ -1258,7 +1383,8 @@
       "endTime": "10:45",
       "category": "leisure",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "1c188b03-6ce3-4c2e-8a43-f449527ef75e@goalkeeperai.local",
@@ -1268,7 +1394,8 @@
       "endTime": "20:45",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "34ce285a-24ee-4d2f-83e9-8ff0aa69ac0f@goalkeeperai.local",
@@ -1278,7 +1405,8 @@
       "endTime": "11:00",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "4dfceba7-6a94-4f06-b66d-82fd64e5bbfb@goalkeeperai.local",
@@ -1288,7 +1416,8 @@
       "endTime": "21:30",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "cbbaf812-8df3-412f-9e6b-de44ec3c5eed@goalkeeperai.local",
@@ -1298,7 +1427,8 @@
       "endTime": "11:00",
       "category": "study",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "54bea7af-a02d-4186-9ce7-1834d7cf3d67@goalkeeperai.local",
@@ -1308,7 +1438,8 @@
       "endTime": "18:45",
       "category": "rest",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "0d86742a-7b8f-4bd0-ac3c-592cafb1dc16@goalkeeperai.local",
@@ -1318,7 +1449,8 @@
       "endTime": "20:45",
       "category": "study",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "c71df0a6-f20b-451f-8a9f-9b6ca9133ac0@goalkeeperai.local",
@@ -1328,7 +1460,8 @@
       "endTime": "22:45",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "3e2d33db-f27f-4759-b5b0-7b60483bc454@goalkeeperai.local",
@@ -1338,7 +1471,8 @@
       "endTime": "12:00",
       "category": "work",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "2f294c19-02ec-45e6-97d0-df67c285e06c@goalkeeperai.local",
@@ -1348,7 +1482,8 @@
       "endTime": "10:30",
       "category": "class",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "5a1c8245-0743-4287-8d1a-d86001ed0d2a@goalkeeperai.local",
@@ -1358,7 +1493,8 @@
       "endTime": "19:15",
       "category": "rest",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "1445bf89-7c44-4885-961d-3dce66c8c3c6@goalkeeperai.local",
@@ -1368,7 +1504,8 @@
       "endTime": "12:15",
       "category": "personal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "67db73c0-3f88-4bb0-b48f-422a2ebf5ace@goalkeeperai.local",
@@ -1378,7 +1515,8 @@
       "endTime": "18:30",
       "category": "class",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "d318f924-2376-4c5a-b77c-d7a1198f5c52@goalkeeperai.local",
@@ -1388,7 +1526,8 @@
       "endTime": "11:00",
       "category": "class",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "63dbaccb-8350-4f30-bf33-0957c2d16be7@goalkeeperai.local",
@@ -1398,7 +1537,8 @@
       "endTime": "17:30",
       "category": "study",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "44806e3a-22d2-4d65-8f8e-f00ca238f167@goalkeeperai.local",
@@ -1408,7 +1548,8 @@
       "endTime": "10:45",
       "category": "work",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "a8b3cf38-092b-43b4-8853-30faf00b7f36@goalkeeperai.local",
@@ -1418,7 +1559,8 @@
       "endTime": "17:30",
       "category": "work",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "38f1ed28-44ba-4892-bba8-c20056ba0da7@goalkeeperai.local",
@@ -1428,7 +1570,8 @@
       "endTime": "22:15",
       "category": "meal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "e232c52a-174b-43fe-b17a-b99346b0943a@goalkeeperai.local",
@@ -1438,7 +1581,8 @@
       "endTime": "16:45",
       "category": "work",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "2c39169d-751a-4ead-bee6-cf21b65729cc@goalkeeperai.local",
@@ -1448,7 +1592,8 @@
       "endTime": "19:45",
       "category": "work",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "8579d990-f595-4d34-9caf-d78f6de1e89d@goalkeeperai.local",
@@ -1458,7 +1603,8 @@
       "endTime": "17:15",
       "category": "gym",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "e921be45-67ad-44a3-b9ba-e4b48b3fbc2e@goalkeeperai.local",
@@ -1468,7 +1614,8 @@
       "endTime": "13:45",
       "category": "study",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "378a13dd-f094-42fd-bf8f-65e2fae32465@goalkeeperai.local",
@@ -1478,7 +1625,8 @@
       "endTime": "17:45",
       "category": "meal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "605ac935-e58d-4778-989d-99ece5d9ae33@goalkeeperai.local",
@@ -1488,7 +1636,8 @@
       "endTime": "22:45",
       "category": "personal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "7d43dc6c-69f6-42ac-a0e9-2fe44c86a66e@goalkeeperai.local",
@@ -1498,7 +1647,8 @@
       "endTime": "19:30",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "96cf51ce-35c7-4d5a-867c-e704e5a8dae7@goalkeeperai.local",
@@ -1508,7 +1658,8 @@
       "endTime": "11:45",
       "category": "gym",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "0c9dba04-7d30-4f78-ac98-cd86187be800@goalkeeperai.local",
@@ -1518,7 +1669,8 @@
       "endTime": "20:15",
       "category": "work",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "d6c732cc-0c42-4121-b4e5-b66797c1feb8@goalkeeperai.local",
@@ -1528,7 +1680,8 @@
       "endTime": "16:45",
       "category": "rest",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "d63ad1eb-ac0b-4dda-bfca-ea58f08ec858@goalkeeperai.local",
@@ -1538,7 +1691,8 @@
       "endTime": "18:30",
       "category": "class",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "66b2d22f-c857-48f5-a1b6-e386a8ef2cc0@goalkeeperai.local",
@@ -1548,7 +1702,8 @@
       "endTime": "17:15",
       "category": "personal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "f9bf8d18-c96b-4d7a-b2b6-ce52055e7db4@goalkeeperai.local",
@@ -1558,7 +1713,8 @@
       "endTime": "12:00",
       "category": "personal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "7eefded5-e558-4cbc-9529-67de0e08970e@goalkeeperai.local",
@@ -1568,7 +1724,8 @@
       "endTime": "21:30",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "a1e73778-1dcf-4831-b438-47b1c2eb020f@goalkeeperai.local",
@@ -1578,7 +1735,8 @@
       "endTime": "16:00",
       "category": "work",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "1c6260aa-6197-4d23-87a4-aab0d8946b8c@goalkeeperai.local",
@@ -1588,7 +1746,8 @@
       "endTime": "23:00",
       "category": "personal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "e42b1ad5-aae9-438e-8f96-2b7d3e61e87c@goalkeeperai.local",
@@ -1598,7 +1757,8 @@
       "endTime": "17:15",
       "category": "rest",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "cfe558e7-0fa7-41ac-833d-bec876c08f1d@goalkeeperai.local",
@@ -1608,7 +1768,8 @@
       "endTime": "08:45",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "c94deee8-f2e1-418d-8e9c-055cf978a507@goalkeeperai.local",
@@ -1618,7 +1779,8 @@
       "endTime": "14:00",
       "category": "rest",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "38137050-c59c-457f-bb7b-9914a535ba9e@goalkeeperai.local",
@@ -1628,7 +1790,8 @@
       "endTime": "12:30",
       "category": "study",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "f6e750a5-a31b-4a6a-8d41-3910ab9c8720@goalkeeperai.local",
@@ -1638,7 +1801,8 @@
       "endTime": "19:15",
       "category": "study",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "3e5e56aa-7133-4a90-9298-2327117b1014@goalkeeperai.local",
@@ -1648,7 +1812,8 @@
       "endTime": "15:30",
       "category": "leisure",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "a2a64c44-8905-48c8-a83d-fcbf72ffce6a@goalkeeperai.local",
@@ -1658,7 +1823,8 @@
       "endTime": "11:30",
       "category": "gym",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "fb76c28a-29c8-4dab-89fe-4090edc53477@goalkeeperai.local",
@@ -1668,7 +1834,8 @@
       "endTime": "14:15",
       "category": "leisure",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "14b985c8-880f-4b91-a38a-72d775db224f@goalkeeperai.local",
@@ -1678,7 +1845,8 @@
       "endTime": "18:00",
       "category": "work",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "36c7eee0-5950-4e3c-81f0-c19bc0679938@goalkeeperai.local",
@@ -1688,7 +1856,8 @@
       "endTime": "10:00",
       "category": "work",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "4dcbc20c-fa29-4f09-b80d-6dd62e7f5fc8@goalkeeperai.local",
@@ -1698,7 +1867,8 @@
       "endTime": "21:00",
       "category": "rest",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "6f4612b6-87b4-4053-acc5-639da110115b@goalkeeperai.local",
@@ -1708,7 +1878,8 @@
       "endTime": "22:45",
       "category": "meal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "cb17f978-fe09-4dc3-97f3-420a8adeaf00@goalkeeperai.local",
@@ -1718,7 +1889,8 @@
       "endTime": "08:15",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "4b290b6c-b9fd-43b4-b898-186625d26ad8@goalkeeperai.local",
@@ -1728,7 +1900,8 @@
       "endTime": "17:00",
       "category": "work",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "f44553cd-ec1d-4662-89d7-6770bebf2ade@goalkeeperai.local",
@@ -1738,7 +1911,8 @@
       "endTime": "17:45",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "fb039725-bca8-448b-9b1f-aa2b91b2c3ac@goalkeeperai.local",
@@ -1748,7 +1922,8 @@
       "endTime": "22:30",
       "category": "leisure",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "9ae6db0d-2a6e-4fc2-b879-5b2b8d457555@goalkeeperai.local",
@@ -1758,7 +1933,8 @@
       "endTime": "10:00",
       "category": "study",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "5a0d18e1-d5d4-46f0-9f1b-aa7788d91ee3@goalkeeperai.local",
@@ -1768,7 +1944,8 @@
       "endTime": "17:00",
       "category": "work",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "8437aaca-5e90-4725-95e5-e00f98c0a583@goalkeeperai.local",
@@ -1778,7 +1955,8 @@
       "endTime": "09:30",
       "category": "gym",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "1cfccb6c-60d0-4825-b266-1a68cb47dbad@goalkeeperai.local",
@@ -1788,7 +1966,8 @@
       "endTime": "22:15",
       "category": "work",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "5f95c88f-34aa-4216-931a-aa0ad7289d12@goalkeeperai.local",
@@ -1798,7 +1977,8 @@
       "endTime": "19:15",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "556bd11a-2d54-4f7f-9802-d122f457b79c@goalkeeperai.local",
@@ -1808,7 +1988,8 @@
       "endTime": "17:30",
       "category": "gym",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "8bd3574c-4045-44f3-ab3c-f151e4af9f46@goalkeeperai.local",
@@ -1818,7 +1999,8 @@
       "endTime": "14:00",
       "category": "study",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "4466590d-9c40-47ca-b5f7-f9c85b8fc39a@goalkeeperai.local",
@@ -1828,7 +2010,8 @@
       "endTime": "19:15",
       "category": "personal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "a018a2f9-0155-4bfe-8aed-af1ebe2b54ff@goalkeeperai.local",
@@ -1838,7 +2021,8 @@
       "endTime": "16:15",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "5136797d-1799-415b-a2b1-fba31db64c11@goalkeeperai.local",
@@ -1848,7 +2032,8 @@
       "endTime": "12:15",
       "category": "leisure",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "60028161-71f8-4b35-a9f8-bc6bc39902f5@goalkeeperai.local",
@@ -1858,7 +2043,8 @@
       "endTime": "21:15",
       "category": "meal",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "6b7d3b05-7666-40de-b152-c8f4bbd4021c@goalkeeperai.local",
@@ -1868,7 +2054,8 @@
       "endTime": "19:45",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "4865e3fb-abf4-455e-85e5-cd470fa35016@goalkeeperai.local",
@@ -1878,7 +2065,8 @@
       "endTime": "20:15",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "a9f91dac-a069-45c3-a9f2-4045112574c3@goalkeeperai.local",
@@ -1888,7 +2076,8 @@
       "endTime": "13:30",
       "category": "work",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     },
     {
       "id": "4e2e5b16-2c6c-4c2f-809a-8c0683ea60cd@goalkeeperai.local",
@@ -1898,7 +2087,8 @@
       "endTime": "18:45",
       "category": "break",
       "description": "",
-      "recurring": "none"
+      "recurring": "none",
+      "completionStatus": "pending"
     }
   ],
   "goals": []
