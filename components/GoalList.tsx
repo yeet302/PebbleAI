@@ -24,16 +24,16 @@ function deadlineLabel(days: number): string {
 }
 
 function deadlineColor(days: number): string {
-  if (days < 0) return "text-red-600 bg-red-50";
-  if (days <= 7) return "text-orange-600 bg-orange-50";
-  if (days <= 30) return "text-yellow-700 bg-yellow-50";
-  return "text-gray-500 bg-gray-50";
+  if (days < 0) return "text-white bg-red-500";
+  if (days <= 7) return "text-white bg-orange-500";
+  if (days <= 30) return "text-white bg-amber-500";
+  return "text-gray-700 bg-gray-200";
 }
 
 export default function GoalList({ goals, events }: GoalListProps) {
   if (goals.length === 0) {
     return (
-      <p className="text-xs text-gray-400 italic leading-relaxed">
+      <p className="text-xs text-gray-500 italic leading-relaxed">
         No goals yet. Tell Pebble what you want to achieve and by when.
       </p>
     );
@@ -53,19 +53,19 @@ export default function GoalList({ goals, events }: GoalListProps) {
             <p className="font-medium text-sm text-gray-800 leading-snug">{goal.title}</p>
 
             {goal.description && (
-              <p className="text-xs text-gray-400 leading-snug">{goal.description}</p>
+              <p className="text-xs text-gray-600 leading-snug">{goal.description}</p>
             )}
 
             {/* Progress bar */}
             {total > 0 && (
               <div className="space-y-1">
-                <div className="flex justify-between text-xs text-gray-400">
+                <div className="flex justify-between text-xs text-gray-600">
                   <span>{completed} of {total} sessions done</span>
                   <span>{pct}%</span>
                 </div>
                 <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-blue-500 rounded-full transition-all"
+                    className="h-full bg-blue-600 rounded-full transition-all"
                     style={{ width: `${pct}%` }}
                   />
                 </div>
@@ -80,7 +80,7 @@ export default function GoalList({ goals, events }: GoalListProps) {
               ) : (
                 <span className="text-xs text-red-400 italic">No deadline</span>
               )}
-              <span className="text-xs text-gray-300">{goal.type}</span>
+              <span className="text-xs text-gray-500">{goal.type}</span>
             </div>
           </li>
         );

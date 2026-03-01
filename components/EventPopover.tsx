@@ -38,7 +38,7 @@ export default function EventPopover({ event, onUpdate, onDelete, onClose }: Eve
         {/* Header */}
         <div className="flex items-start justify-between gap-2">
           <div>
-            <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">
+            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">
               {isImported ? "Imported event" : "Pebble event"}
             </p>
             {isImported ? (
@@ -58,7 +58,7 @@ export default function EventPopover({ event, onUpdate, onDelete, onClose }: Eve
         <div className="space-y-3">
           <div className="flex gap-2">
             <div className="flex-1 space-y-1">
-              <label className="text-xs text-gray-400">Date</label>
+              <label className="text-xs text-gray-600">Date</label>
               {isImported ? (
                 <p className="text-sm text-gray-700">{event.date}</p>
               ) : (
@@ -70,7 +70,7 @@ export default function EventPopover({ event, onUpdate, onDelete, onClose }: Eve
 
           <div className="flex gap-2">
             <div className="flex-1 space-y-1">
-              <label className="text-xs text-gray-400">Start</label>
+              <label className="text-xs text-gray-600">Start</label>
               {isImported ? (
                 <p className="text-sm text-gray-700">{event.startTime}</p>
               ) : (
@@ -79,7 +79,7 @@ export default function EventPopover({ event, onUpdate, onDelete, onClose }: Eve
               )}
             </div>
             <div className="flex-1 space-y-1">
-              <label className="text-xs text-gray-400">End</label>
+              <label className="text-xs text-gray-600">End</label>
               {isImported ? (
                 <p className="text-sm text-gray-700">{event.endTime}</p>
               ) : (
@@ -91,7 +91,7 @@ export default function EventPopover({ event, onUpdate, onDelete, onClose }: Eve
 
           {!isImported && (
             <div className="space-y-1">
-              <label className="text-xs text-gray-400">Category</label>
+              <label className="text-xs text-gray-600">Category</label>
               <select value={form.category} onChange={(e) => set("category", e.target.value as EventCategory)}
                 className="w-full text-sm border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 capitalize">
                 {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
@@ -101,8 +101,8 @@ export default function EventPopover({ event, onUpdate, onDelete, onClose }: Eve
 
           {event.description && (
             <div className="space-y-1">
-              <label className="text-xs text-gray-400">Notes</label>
-              <p className="text-xs text-gray-500 leading-relaxed">{event.description}</p>
+              <label className="text-xs text-gray-600">Notes</label>
+              <p className="text-xs text-gray-700 leading-relaxed">{event.description}</p>
             </div>
           )}
         </div>
@@ -126,7 +126,7 @@ export default function EventPopover({ event, onUpdate, onDelete, onClose }: Eve
 
         {/* Actions */}
         {isImported ? (
-          <p className="text-xs text-gray-300 italic">Imported events can&apos;t be edited here. Update them in your calendar app.</p>
+          <p className="text-xs text-gray-500 italic">Imported events can&apos;t be edited here. Update them in your calendar app.</p>
         ) : (
           <div className="flex items-center justify-between pt-1">
             <button onClick={handleDelete} className="text-xs text-red-400 hover:text-red-600 transition-colors">

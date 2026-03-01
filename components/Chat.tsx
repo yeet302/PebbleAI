@@ -29,7 +29,7 @@ export default function Chat({ messages, onSend, loading }: ChatProps) {
       {/* Message history */}
       <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
         {messages.length === 0 && (
-          <p className="text-sm text-gray-400 italic text-center mt-4">
+          <p className="text-sm text-gray-500 italic text-center mt-4">
             Tell me your goals or ask me to update your schedule.
           </p>
         )}
@@ -61,7 +61,7 @@ export default function Chat({ messages, onSend, loading }: ChatProps) {
       </div>
 
       {/* Input */}
-      <form onSubmit={handleSubmit} className="flex gap-2 px-4 py-3 border-t border-gray-100">
+      <form onSubmit={handleSubmit} className="flex gap-2 px-4 py-3 border-t border-gray-200">
         <input
           type="text"
           value={value}

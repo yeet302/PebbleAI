@@ -149,7 +149,7 @@ export default function HomePage() {
           >
             Review Week
           </button>
-          <button onClick={handleClear} className="text-xs text-gray-400 hover:text-red-500">Reset</button>
+          <button onClick={handleClear} className="text-xs text-gray-500 hover:text-red-500">Reset</button>
         </div>
       </header>
 
@@ -157,7 +157,7 @@ export default function HomePage() {
         {/* Sidebar — Goals */}
         <aside className="w-56 border-r bg-white flex flex-col flex-shrink-0">
           <div className="px-4 py-3 border-b">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Goals</p>
+            <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Goals</p>
           </div>
           <div className="flex-1 overflow-y-auto p-3">
             <GoalList goals={schedule.goals} events={schedule.events} />
@@ -178,7 +178,7 @@ export default function HomePage() {
         {/* Chat panel */}
         <aside className="w-80 border-l bg-white flex flex-col flex-shrink-0">
           <div className="px-4 py-3 border-b flex-shrink-0">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Assistant</p>
+            <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Assistant</p>
           </div>
           {error && <p className="text-xs text-red-500 px-4 pt-2">{error}</p>}
           <div className="flex-1 overflow-hidden">

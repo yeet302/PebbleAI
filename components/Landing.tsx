@@ -32,7 +32,7 @@ export default function Landing({ onImport, onSkip }: LandingProps) {
           <img src="/pebble_logo.png" alt="Pebble" className="w-56 h-56 rounded-3xl object-cover shadow-md" />
           <div>
             <h1 className="text-4xl font-bold text-gray-900">Pebble</h1>
-            <p className="mt-2 text-gray-500">Find time in your busy life for what actually matters.</p>
+            <p className="mt-2 text-gray-600">Find time in your busy life for what actually matters.</p>
           </div>
         </div>
 
@@ -48,7 +48,7 @@ export default function Landing({ onImport, onSkip }: LandingProps) {
               </svg>
               <div>
                 <p className="font-semibold text-gray-700 group-hover:text-blue-600">Import your calendar</p>
-                <p className="text-sm text-gray-400 mt-0.5">Drop your .ics file from Google, Apple, or Outlook</p>
+                <p className="text-sm text-gray-600 mt-0.5">Drop your .ics file from Google, Apple, or Outlook</p>
               </div>
             </div>
           </button>
@@ -56,13 +56,13 @@ export default function Landing({ onImport, onSkip }: LandingProps) {
 
           <button
             onClick={onSkip}
-            className="w-full text-sm text-gray-400 hover:text-gray-600 py-2 transition-colors"
+            className="w-full text-sm text-gray-600 hover:text-gray-800 py-2 transition-colors"
           >
             Start with a blank calendar →
           </button>
         </div>
 
-        <p className="text-xs text-gray-300">Your calendar stays on your device. Nothing is uploaded.</p>
+        <p className="text-xs text-gray-500">Your calendar stays on your device. Nothing is uploaded.</p>
       </div>
     </div>
   );

@@ -24,27 +24,27 @@ const DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 const categoryColors: Record<string, string> = {
-  class:    "bg-blue-400 text-white border-blue-500",
-  study:    "bg-yellow-400 text-white border-yellow-500",
-  gym:      "bg-green-400 text-white border-green-500",
-  work:     "bg-orange-400 text-white border-orange-500",
-  goal:     "bg-purple-400 text-white border-purple-500",
-  personal: "bg-gray-400 text-white border-gray-500",
+  class:    "bg-blue-600 text-white border-blue-700",
+  study:    "bg-amber-500 text-white border-amber-600",
+  gym:      "bg-emerald-500 text-white border-emerald-600",
+  work:     "bg-orange-500 text-white border-orange-600",
+  goal:     "bg-violet-600 text-white border-violet-700",
+  personal: "bg-slate-500 text-white border-slate-600",
 };
 
 // Imported events use muted/outlined style
 const importedColors: Record<string, string> = {
-  class:    "bg-blue-50 text-blue-700 border-blue-300",
-  study:    "bg-yellow-50 text-yellow-700 border-yellow-300",
-  gym:      "bg-green-50 text-green-700 border-green-300",
-  work:     "bg-orange-50 text-orange-700 border-orange-300",
-  goal:     "bg-purple-50 text-purple-700 border-purple-300",
-  personal: "bg-gray-50 text-gray-600 border-gray-300",
+  class:    "bg-blue-100 text-blue-800 border-blue-400",
+  study:    "bg-amber-100 text-amber-800 border-amber-400",
+  gym:      "bg-emerald-100 text-emerald-800 border-emerald-400",
+  work:     "bg-orange-100 text-orange-800 border-orange-400",
+  goal:     "bg-violet-100 text-violet-800 border-violet-400",
+  personal: "bg-slate-100 text-slate-700 border-slate-400",
 };
 
 const categoryDotColors: Record<string, string> = {
-  class: "bg-blue-400", study: "bg-yellow-400", gym: "bg-green-400",
-  work: "bg-orange-400", goal: "bg-purple-400", personal: "bg-gray-400",
+  class: "bg-blue-600", study: "bg-amber-500", gym: "bg-emerald-500",
+  work: "bg-orange-500", goal: "bg-violet-600", personal: "bg-slate-500",
 };
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -133,10 +133,10 @@ function WeekView({ days, events, today, highlights, onEventClick }: { days: str
         {DAY_NAMES.map((name, i) => {
           const isToday = days[i] === today;
           return (
-            <div key={name} className="flex-1 text-center py-3 text-xs font-semibold text-gray-500 border-l border-gray-100">
+            <div key={name} className="flex-1 text-center py-3 text-xs font-semibold text-gray-600 border-l border-gray-200">
               <div>{name}</div>
               <div className={`text-base font-bold mt-0.5 w-8 h-8 flex items-center justify-center rounded-full mx-auto
-                ${isToday ? "bg-blue-500 text-white" : "text-gray-700"}`}>
+                ${isToday ? "bg-blue-500 text-white" : "text-gray-800"}`}>
                 {days[i].slice(8)}
               </div>
             </div>
@@ -147,7 +147,7 @@ function WeekView({ days, events, today, highlights, onEventClick }: { days: str
       <div className="flex flex-1 overflow-y-auto">
         <div className="w-14 flex-shrink-0 relative bg-white" style={{ height: TOTAL_HOURS * HOUR_HEIGHT }}>
           {HOURS.map((h) => (
-            <div key={h} className="absolute right-2 text-xs text-gray-400" style={{ top: (h - START_HOUR) * HOUR_HEIGHT - 8 }}>
+            <div key={h} className="absolute right-2 text-xs text-gray-500" style={{ top: (h - START_HOUR) * HOUR_HEIGHT - 8 }}>
               {h === 12 ? "12pm" : h > 12 ? `${h - 12}pm` : `${h}am`}
             </div>
           ))}
@@ -213,7 +213,7 @@ function MonthView({ year, month, events, today, onDayClick }: {
       {/* Day headers */}
       <div className="grid grid-cols-7 border-b border-gray-200 bg-white flex-shrink-0">
         {DAY_NAMES.map((d) => (
-          <div key={d} className="text-center py-2 text-xs font-semibold text-gray-400">{d}</div>
+          <div key={d} className="text-center py-2 text-xs font-semibold text-gray-600">{d}</div>
         ))}
       </div>
       {/* Grid */}
@@ -231,7 +231,7 @@ function MonthView({ year, month, events, today, onDayClick }: {
                 {date && (
                   <>
                     <div className={`text-xs font-semibold w-6 h-6 flex items-center justify-center rounded-full mb-1
-                      ${isToday ? "bg-blue-500 text-white" : "text-gray-600"}`}>
+                      ${isToday ? "bg-blue-500 text-white" : "text-gray-800"}`}>
                       {date.slice(8)}
                     </div>
                     <div className="space-y-0.5">
@@ -243,7 +243,7 @@ function MonthView({ year, month, events, today, onDayClick }: {
                         </div>
                       ))}
                       {dayEvents.length > 3 && (
-                        <div className="text-xs text-gray-400 pl-1">+{dayEvents.length - 3} more</div>
+                        <div className="text-xs text-gray-500 pl-1">+{dayEvents.length - 3} more</div>
                       )}
                     </div>
                   </>
@@ -274,10 +274,10 @@ function YearView({ year, events, onMonthClick }: {
               onClick={() => onMonthClick(month)}
               className="border border-gray-200 rounded-xl p-3 cursor-pointer hover:border-blue-300 hover:shadow-sm transition-all"
             >
-              <p className="text-xs font-semibold text-gray-600 mb-2">{MONTH_NAMES[month]}</p>
+              <p className="text-xs font-semibold text-gray-700 mb-2">{MONTH_NAMES[month]}</p>
               <div className="grid grid-cols-7 gap-px">
                 {DAY_NAMES.map((d) => (
-                  <div key={d} className="text-center text-gray-300 font-medium" style={{ fontSize: 8 }}>{d[0]}</div>
+                  <div key={d} className="text-center text-gray-500 font-medium" style={{ fontSize: 8 }}>{d[0]}</div>
                 ))}
                 {grid.map((date, i) => {
                   const hasEvent = date ? eventDates.has(date) : false;
@@ -368,17 +368,17 @@ export default function Calendar({ events, highlightedEventIds, onHighlightDone,
     <div className="flex flex-col h-full">
       {/* Toolbar */}
       <div className="flex items-center gap-3 mb-3 flex-shrink-0">
-        <button onClick={() => navigate(-1)} className="rounded px-2 py-1 text-sm text-gray-500 hover:bg-gray-100">← Prev</button>
-        <span className="text-sm font-semibold text-gray-700 w-36 text-center">{label}</span>
-        <button onClick={() => navigate(1)} className="rounded px-2 py-1 text-sm text-gray-500 hover:bg-gray-100">Next →</button>
-        <button onClick={() => { setCurrent(new Date()); }} className="rounded px-2 py-1 text-xs text-blue-500 hover:bg-blue-50">Today</button>
+        <button onClick={() => navigate(-1)} className="rounded px-2 py-1 text-sm text-gray-700 hover:bg-gray-100">← Prev</button>
+        <span className="text-sm font-semibold text-gray-800 w-36 text-center">{label}</span>
+        <button onClick={() => navigate(1)} className="rounded px-2 py-1 text-sm text-gray-700 hover:bg-gray-100">Next →</button>
+        <button onClick={() => { setCurrent(new Date()); }} className="rounded px-2 py-1 text-xs text-blue-600 hover:bg-blue-50">Today</button>
 
         <div className="ml-auto flex rounded-lg border border-gray-200 overflow-hidden text-xs">
           {(["week", "month", "year"] as View[]).map((v) => (
             <button
               key={v}
               onClick={() => setView(v)}
-              className={`px-3 py-1.5 capitalize transition-colors ${view === v ? "bg-blue-600 text-white" : "text-gray-500 hover:bg-gray-50"}`}
+              className={`px-3 py-1.5 capitalize transition-colors ${view === v ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}
             >
               {v}
             </button>
