@@ -12,6 +12,9 @@ const SCHEDULE_KEY = "pebble-schedule";
 const MESSAGES_KEY = "pebble-messages";
 const STARTED_KEY = "pebble-started";
 const CHECKIN_KEY = "pebble-checkin-date";
+const GC_ACCESS_KEY = "pebble-gc-access";
+const GC_REFRESH_KEY = "pebble-gc-refresh";
+const GC_EXPIRY_KEY = "pebble-gc-expiry";
 const INITIAL_STATE: ScheduleState = { events: [], goals: [] };
 
 export default function HomePage() {
@@ -22,8 +25,26 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null);
   const [showReview, setShowReview] = useState(false);
   const [highlightedEventIds, setHighlightedEventIds] = useState<string[]>([]);
+  const [gcConnected, setGcConnected] = useState(false);
 
   useEffect(() => {
+    // 1. Check URL params for post-OAuth redirect tokens
+    const url = new URL(window.location.href);
+    const gcAccessParam = url.searchParams.get("gc_access");
+    const gcRefreshParam = url.searchParams.get("gc_refresh");
+    const gcExpiryParam = url.searchParams.get("gc_expiry");
+
+    if (gcAccessParam) {
+      localStorage.setItem(GC_ACCESS_KEY, gcAccessParam);
+      if (gcRefreshParam) localStorage.setItem(GC_REFRESH_KEY, gcRefreshParam);
+      if (gcExpiryParam) localStorage.setItem(GC_EXPIRY_KEY, gcExpiryParam);
+      // Clean URL
+      url.searchParams.delete("gc_access");
+      url.searchParams.delete("gc_refresh");
+      url.searchParams.delete("gc_expiry");
+      window.history.replaceState({}, "", url.toString());
+    }
+
     const s = localStorage.getItem(SCHEDULE_KEY);
     const loadedSchedule: ScheduleState = s ? JSON.parse(s) : INITIAL_STATE;
     setSchedule(loadedSchedule);
@@ -31,7 +52,45 @@ export default function HomePage() {
     if (m) setMessages(JSON.parse(m));
     if (localStorage.getItem(STARTED_KEY)) setStarted(true);
 
-    // Daily check-in: once per day if there are incomplete past/today Pebble sessions
+    // 2. Google Calendar sync
+    const accessToken = localStorage.getItem(GC_ACCESS_KEY);
+    if (accessToken) {
+      setGcConnected(true);
+      const refreshToken = localStorage.getItem(GC_REFRESH_KEY) ?? "";
+      const expiry = Number(localStorage.getItem(GC_EXPIRY_KEY) ?? "0");
+
+      fetch("/api/calendar/google", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ accessToken, refreshToken, expiry }),
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.error) return;
+          if (data.newAccessToken) {
+            localStorage.setItem(GC_ACCESS_KEY, data.newAccessToken);
+            if (data.newExpiry) localStorage.setItem(GC_EXPIRY_KEY, String(data.newExpiry));
+          }
+          setSchedule((prev) => {
+            const pebbleEvents = prev.events.filter((e) => e.source !== "imported");
+            return { ...prev, events: [...pebbleEvents, ...data.events] };
+          });
+          // Auto-start if returning from OAuth and not yet started
+          if (gcAccessParam && !localStorage.getItem(STARTED_KEY)) {
+            const next: ScheduleState = { events: data.events, goals: [] };
+            setSchedule(next);
+            setStarted(true);
+            localStorage.setItem(STARTED_KEY, "1");
+            setMessages([{
+              role: "assistant",
+              content: `I've loaded ${data.events.length} events from your Google Calendar. What goal or hobby do you want to make time for?`,
+            }]);
+          }
+        })
+        .catch(() => {});
+    }
+
+    // 3. Daily check-in: once per day if there are incomplete past/today Pebble sessions
     const today = new Date().toISOString().split("T")[0];
     const lastCheckin = localStorage.getItem(CHECKIN_KEY);
     if (lastCheckin !== today && localStorage.getItem(STARTED_KEY)) {
@@ -120,9 +179,22 @@ export default function HomePage() {
     setSchedule(INITIAL_STATE);
     setMessages([]);
     setStarted(false);
+    setGcConnected(false);
     localStorage.removeItem(SCHEDULE_KEY);
     localStorage.removeItem(MESSAGES_KEY);
     localStorage.removeItem(STARTED_KEY);
+    localStorage.removeItem(GC_ACCESS_KEY);
+    localStorage.removeItem(GC_REFRESH_KEY);
+    localStorage.removeItem(GC_EXPIRY_KEY);
+  };
+
+  const handleGcDisconnect = () => {
+    setGcConnected(false);
+    localStorage.removeItem(GC_ACCESS_KEY);
+    localStorage.removeItem(GC_REFRESH_KEY);
+    localStorage.removeItem(GC_EXPIRY_KEY);
+    // Remove imported events, keep pebble events
+    setSchedule((prev) => ({ ...prev, events: prev.events.filter((e) => e.source !== "imported") }));
   };
 
   return (
@@ -143,6 +215,25 @@ export default function HomePage() {
           <h1 className="text-xl font-bold text-blue-600">Pebble</h1>
         </div>
         <div className="flex items-center gap-4">
+          {gcConnected && (
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-green-700 bg-green-50 border border-green-200 rounded-lg px-2.5 py-1 flex items-center gap-1.5">
+                <svg className="w-3 h-3" viewBox="0 0 24 24">
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Google Calendar
+              </span>
+              <button
+                onClick={handleGcDisconnect}
+                className="text-xs text-gray-400 hover:text-red-500 transition-colors"
+              >
+                Disconnect
+              </button>
+            </div>
+          )}
           <button
             onClick={() => setShowReview(true)}
             className="text-xs text-gray-500 border border-gray-200 rounded-lg px-3 py-1.5 hover:border-blue-300 hover:text-blue-600 transition-colors"
