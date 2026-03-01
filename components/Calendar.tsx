@@ -107,6 +107,7 @@ function layoutEvents(events: CalendarEvent[]) {
 
 // ── sub-views ────────────────────────────────────────────────────────────────
 function WeekView({ days, events, today, highlights, onEventClick }: { days: string[]; events: CalendarEvent[]; today: string; highlights: Set<string>; onEventClick: (e: CalendarEvent) => void }) {
+
   return (
     <div className="flex flex-col flex-1 overflow-hidden border border-gray-200 rounded-xl">
       {/* Day headers */}

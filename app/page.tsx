@@ -11,6 +11,7 @@ import WeeklyReview from "@/components/WeeklyReview";
 const SCHEDULE_KEY = "pebble-schedule";
 const MESSAGES_KEY = "pebble-messages";
 const STARTED_KEY = "pebble-started";
+const CHECKIN_KEY = "pebble-checkin-date";
 const INITIAL_STATE: ScheduleState = { events: [], goals: [] };
 
 export default function HomePage() {
@@ -24,10 +25,46 @@ export default function HomePage() {
 
   useEffect(() => {
     const s = localStorage.getItem(SCHEDULE_KEY);
-    if (s) setSchedule(JSON.parse(s));
+    const loadedSchedule: ScheduleState = s ? JSON.parse(s) : INITIAL_STATE;
+    setSchedule(loadedSchedule);
     const m = localStorage.getItem(MESSAGES_KEY);
     if (m) setMessages(JSON.parse(m));
     if (localStorage.getItem(STARTED_KEY)) setStarted(true);
+
+    // Daily check-in: once per day if there are incomplete past/today Pebble sessions
+    const today = new Date().toISOString().split("T")[0];
+    const lastCheckin = localStorage.getItem(CHECKIN_KEY);
+    if (lastCheckin !== today && localStorage.getItem(STARTED_KEY)) {
+      const pending = loadedSchedule.events.filter(
+        (e) => e.source === "pebble" && !e.completed && e.date <= today
+      );
+      if (pending.length > 0) {
+        const list = pending.map((e) => `• ${e.title} (${e.date})`).join("\n");
+        const checkinMsg: Message = {
+          role: "user",
+          content: `[DAILY CHECK-IN] Today is ${today}. These Pebble sessions are scheduled but not yet marked complete:\n${list}\n\nPlease ask me which ones I completed.`,
+        };
+        localStorage.setItem(CHECKIN_KEY, today);
+        // Trigger after a short delay so the UI is ready
+        setTimeout(() => {
+          setMessages((prev) => {
+            const next = [...prev, checkinMsg];
+            fetch("/api/schedule", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ messages: next, currentState: loadedSchedule }),
+            })
+              .then((r) => r.json())
+              .then((data) => {
+                setMessages((p) => [...p, { role: "assistant", content: data.message }]);
+                setSchedule(data.schedule);
+              })
+              .catch(() => {});
+            return next;
+          });
+        }, 800);
+      }
+    }
   }, []);
 
   useEffect(() => {

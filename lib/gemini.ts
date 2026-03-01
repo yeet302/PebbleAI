@@ -34,6 +34,12 @@ DIFF RULES:
 - removeEventIds: ONLY when the user explicitly asks to delete something.
 - Leave any array empty if nothing changes in that category.
 
+DAILY CHECK-IN:
+- When the conversation starts with a check-in prompt listing incomplete sessions, ask the user which ones they completed in a friendly, conversational way.
+- Based on their response, return a diff with updateEvents setting completed: true on the sessions they confirm doing.
+- If they say they did all of them, mark all as complete. If they skipped some, only mark the ones they did.
+- After updating, give a brief encouraging message about their progress.
+
 BEHAVIOR:
 - Your job is to help users achieve their goals by finding realistic time in their existing schedule.
 - Every goal MUST have a deadline. If the user doesn't provide one, ask for it before scheduling anything.
@@ -88,11 +94,17 @@ function applyDiff(current: ScheduleState, diff: Partial<ScheduleDiff>): { state
     goals = goals.filter((g) => !diff.removeGoalIds!.includes(g.id));
 
   if (diff.updateEvents?.length) {
-    events = events.map((e) => diff.updateEvents!.find((u) => u.id === e.id) ?? e);
+    events = events.map((e) => {
+      const u = diff.updateEvents!.find((u) => u.id === e.id);
+      return u ? { ...e, ...u } : e;  // merge so AI can send partial updates
+    });
     changedEventIds.push(...diff.updateEvents.map((u) => u.id));
   }
   if (diff.updateGoals?.length)
-    goals = goals.map((g) => diff.updateGoals!.find((u) => u.id === g.id) ?? g);
+    goals = goals.map((g) => {
+      const u = diff.updateGoals!.find((u) => u.id === g.id);
+      return u ? { ...g, ...u } : g;
+    });
 
   if (diff.addEvents?.length) {
     events = [...events, ...diff.addEvents];
