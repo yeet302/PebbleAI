@@ -162,7 +162,10 @@ function WeekView({ days, events, today, highlights, onEventClick }: { days: str
                       }}
                       title={`${event.title}\n${event.startTime}–${event.endTime}`}
                     >
-                      <p className="font-semibold truncate leading-tight">{event.title}</p>
+                      <div className="flex items-center gap-1">
+                        {event.completed && <span className="opacity-80">✓</span>}
+                        <p className={`font-semibold truncate leading-tight ${event.completed ? "line-through opacity-60" : ""}`}>{event.title}</p>
+                      </div>
                       {height >= 32 && <p className="opacity-80 truncate">{event.startTime}–{event.endTime}</p>}
                     </div>
                   );

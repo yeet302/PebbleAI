@@ -18,7 +18,8 @@ Diff schema (use null if not making changes yet):
 }
 
 Event fields: id (uuid), title, date (YYYY-MM-DD), startTime (HH:MM), endTime (HH:MM),
-  category ("class"|"study"|"gym"|"work"|"goal"|"personal"), source ("pebble"), description?, recurring ("daily"|"weekly"|"none")
+  category ("class"|"study"|"gym"|"work"|"goal"|"personal"), source ("pebble"), description?, recurring ("daily"|"weekly"|"none"),
+  goalId (string — set this to the goal's id when creating sessions for a goal)
 
 Goal fields: id (uuid), title, type ("short-term"|"long-term"), description?, deadline?
 
@@ -44,13 +45,22 @@ BEHAVIOR:
 
 function buildPrompt(messages: Message[], currentState: ScheduleState): string {
   const summary = {
-    goals: currentState.goals.map((g) => ({ id: g.id, title: g.title })),
+    goals: currentState.goals.map((g) => {
+      const sessions = currentState.events.filter((e) => e.goalId === g.id && e.source === "pebble");
+      return {
+        id: g.id,
+        title: g.title,
+        deadline: g.deadline,
+        sessionsCompleted: sessions.filter((e) => e.completed).length,
+        sessionsTotal: sessions.length,
+      };
+    }),
     importedEvents: currentState.events
       .filter((e) => e.source === "imported")
       .map((e) => ({ id: e.id, title: e.title, date: e.date, startTime: e.startTime, endTime: e.endTime })),
     pebbleEvents: currentState.events
       .filter((e) => e.source === "pebble")
-      .map((e) => ({ id: e.id, title: e.title, date: e.date, startTime: e.startTime, endTime: e.endTime })),
+      .map((e) => ({ id: e.id, title: e.title, date: e.date, startTime: e.startTime, endTime: e.endTime, goalId: e.goalId, completed: e.completed })),
   };
 
   const history = messages.map((m) => `${m.role === "user" ? "User" : "Assistant"}: ${m.content}`).join("\n");

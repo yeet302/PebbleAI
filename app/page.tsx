@@ -123,7 +123,7 @@ export default function HomePage() {
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Goals</p>
           </div>
           <div className="flex-1 overflow-y-auto p-3">
-            <GoalList goals={schedule.goals} />
+            <GoalList goals={schedule.goals} events={schedule.events} />
           </div>
         </aside>
 

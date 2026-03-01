@@ -11,6 +11,8 @@ export interface CalendarEvent {
   source: EventSource;
   description?: string;
   recurring?: "daily" | "weekly" | "none";
+  goalId?: string;    // links this session to a Goal
+  completed?: boolean;
 }
 
 export interface Goal {

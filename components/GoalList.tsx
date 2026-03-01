@@ -1,9 +1,10 @@
 "use client";
 
-import { Goal } from "@/types";
+import { Goal, CalendarEvent } from "@/types";
 
 interface GoalListProps {
   goals: Goal[];
+  events: CalendarEvent[];
 }
 
 function daysUntil(deadline: string): number {
@@ -29,7 +30,7 @@ function deadlineColor(days: number): string {
   return "text-gray-500 bg-gray-50";
 }
 
-export default function GoalList({ goals }: GoalListProps) {
+export default function GoalList({ goals, events }: GoalListProps) {
   if (goals.length === 0) {
     return (
       <p className="text-xs text-gray-400 italic leading-relaxed">
@@ -42,12 +43,33 @@ export default function GoalList({ goals }: GoalListProps) {
     <ul className="space-y-2">
       {goals.map((goal) => {
         const days = goal.deadline ? daysUntil(goal.deadline) : null;
+        const sessions = events.filter((e) => e.goalId === goal.id && e.source === "pebble");
+        const completed = sessions.filter((e) => e.completed).length;
+        const total = sessions.length;
+        const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+
         return (
-          <li key={goal.id} className="rounded-xl border border-gray-100 bg-white p-3 shadow-sm space-y-1.5">
+          <li key={goal.id} className="rounded-xl border border-gray-100 bg-white p-3 shadow-sm space-y-2">
             <p className="font-medium text-sm text-gray-800 leading-snug">{goal.title}</p>
 
             {goal.description && (
               <p className="text-xs text-gray-400 leading-snug">{goal.description}</p>
+            )}
+
+            {/* Progress bar */}
+            {total > 0 && (
+              <div className="space-y-1">
+                <div className="flex justify-between text-xs text-gray-400">
+                  <span>{completed} of {total} sessions done</span>
+                  <span>{pct}%</span>
+                </div>
+                <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-blue-500 rounded-full transition-all"
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+              </div>
             )}
 
             <div className="flex items-center justify-between gap-2">
@@ -56,7 +78,7 @@ export default function GoalList({ goals }: GoalListProps) {
                   {deadlineLabel(days)}
                 </span>
               ) : (
-                <span className="text-xs text-red-400 italic">No deadline set</span>
+                <span className="text-xs text-red-400 italic">No deadline</span>
               )}
               <span className="text-xs text-gray-300">{goal.type}</span>
             </div>

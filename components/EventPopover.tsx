@@ -107,6 +107,23 @@ export default function EventPopover({ event, onUpdate, onDelete, onClose }: Eve
           )}
         </div>
 
+        {/* Complete toggle — Pebble events only */}
+        {!isImported && (
+          <button
+            onClick={() => setForm((f) => ({ ...f, completed: !f.completed }))}
+            className={`w-full flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
+              form.completed
+                ? "bg-green-50 text-green-700 border border-green-200"
+                : "bg-gray-50 text-gray-500 border border-gray-200 hover:border-green-300 hover:text-green-600"
+            }`}
+          >
+            <span className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${form.completed ? "bg-green-500 border-green-500" : "border-gray-300"}`}>
+              {form.completed && <svg className="w-2.5 h-2.5 text-white" viewBox="0 0 10 10" fill="currentColor"><path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+            </span>
+            {form.completed ? "Completed" : "Mark as complete"}
+          </button>
+        )}
+
         {/* Actions */}
         {isImported ? (
           <p className="text-xs text-gray-300 italic">Imported events can&apos;t be edited here. Update them in your calendar app.</p>
