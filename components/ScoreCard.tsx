@@ -48,7 +48,7 @@ export default function ScoreCard({ schedule, profile, onClose }: ScoreCardProps
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b">
-          <h2 className="text-base font-semibold text-gray-800">Schedule Score</h2>
+          <h2 className="text-base font-semibold text-gray-800">Wellness Score</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors text-xl leading-none"
@@ -89,8 +89,8 @@ export default function ScoreCard({ schedule, profile, onClose }: ScoreCardProps
               <span className="text-xs text-gray-500 font-medium uppercase tracking-wider">/ 100 · {scoreLabel(data.overall)}</span>
             </div>
 
-            {/* Category grid */}
-            <div className="grid grid-cols-2 gap-3">
+            {/* Category list */}
+            <div className="flex flex-col gap-3">
               {data.categories.map((cat) => {
                 const c = scoreColors(cat.score);
                 return (
