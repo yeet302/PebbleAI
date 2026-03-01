@@ -24,7 +24,7 @@ export default function ChatInput({ onSubmit, loading }: ChatInputProps) {
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder='e.g. "Add CS 301 every Mon/Wed 10-11am" or "I want to do LeetCode daily for 1 hour"'
-        className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
         disabled={loading}
       />
       <button

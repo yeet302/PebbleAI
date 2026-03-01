@@ -1,4 +1,13 @@
-export type EventCategory = "class" | "study" | "gym" | "work" | "goal" | "personal";
+export type EventCategory =
+  | "class"
+  | "study"
+  | "gym"
+  | "work"
+  | "goal"
+  | "personal"
+  | "sleep"
+  | "meal"
+  | "break";
 
 export interface CalendarEvent {
   id: string;
