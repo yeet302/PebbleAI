@@ -8,6 +8,7 @@ import Chat from "@/components/Chat";
 import Landing from "@/components/Landing";
 import WeeklyReview from "@/components/WeeklyReview";
 import ScoreCard from "@/components/ScoreCard";
+import SchedulePickerModal from "@/components/SchedulePickerModal";
 
 const SCHEDULE_KEY = "pebble-schedule";
 const MESSAGES_KEY = "pebble-messages";
@@ -28,7 +29,6 @@ export default function HomePage() {
   const [showReview, setShowReview] = useState(false);
   const [showScore, setShowScore] = useState(false);
   const [pendingOptions, setPendingOptions] = useState<SchedulingOption[] | null>(null);
-  const [activePreviewId, setActivePreviewId] = useState<string | null>(null);
   const [highlightedEventIds, setHighlightedEventIds] = useState<string[]>([]);
   const [gcConnected, setGcConnected] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -194,7 +194,6 @@ export default function HomePage() {
       }
       if (data.schedulingOptions?.length) {
         setPendingOptions(data.schedulingOptions);
-        setActivePreviewId(data.schedulingOptions[0].id);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
@@ -213,7 +212,6 @@ export default function HomePage() {
     setMessages((prev) => [...prev, { role: "assistant", content: option.rationale }]);
     setHighlightedEventIds(option.previewEvents.map((e) => e.id));
     setPendingOptions(null);
-    setActivePreviewId(null);
   };
 
   const handleClear = () => {
@@ -223,7 +221,6 @@ export default function HomePage() {
     setGcConnected(false);
     setProfile(null);
     setPendingOptions(null);
-    setActivePreviewId(null);
     localStorage.removeItem(SCHEDULE_KEY);
     localStorage.removeItem(MESSAGES_KEY);
     localStorage.removeItem(STARTED_KEY);
@@ -272,6 +269,14 @@ export default function HomePage() {
   return (
     <div className="h-screen overflow-hidden flex flex-col">
       {!started && <Landing onImport={(events) => begin(events)} onSkip={() => begin()} />}
+      {pendingOptions && (
+        <SchedulePickerModal
+          options={pendingOptions}
+          schedule={schedule}
+          onSelect={handleSelectOption}
+          onClose={() => setPendingOptions(null)}
+        />
+      )}
       {showScore && (
         <ScoreCard schedule={schedule} profile={profile} onClose={() => setShowScore(false)} />
       )}
@@ -347,41 +352,14 @@ export default function HomePage() {
         </aside>
 
         {/* Calendar */}
-        <main className="flex-1 overflow-hidden p-4 flex flex-col gap-2">
-          {/* Preview tab bar */}
-          {pendingOptions && (
-            <div className="flex items-center gap-2 flex-shrink-0">
-              <span className="text-xs text-gray-400 font-medium">Preview:</span>
-              {pendingOptions.map((opt) => {
-                const icons: Record<string, string> = { sleep: "🌙", productivity: "⚡", fitness: "💪" };
-                return (
-                  <button
-                    key={opt.id}
-                    onClick={() => setActivePreviewId(opt.id)}
-                    className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${activePreviewId === opt.id ? "bg-blue-600 text-white border-blue-600" : "border-gray-200 text-gray-600 hover:border-blue-300 hover:text-blue-600"}`}
-                  >
-                    {icons[opt.id]} {opt.title}
-                  </button>
-                );
-              })}
-              <button
-                onClick={() => { setPendingOptions(null); setActivePreviewId(null); }}
-                className="ml-auto text-xs text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                Cancel
-              </button>
-            </div>
-          )}
-          <div className="flex-1 overflow-hidden">
-            <Calendar
-              events={schedule.events}
-              previewEvents={pendingOptions && activePreviewId ? (pendingOptions.find((o) => o.id === activePreviewId)?.previewEvents ?? []) : []}
-              highlightedEventIds={highlightedEventIds}
-              onHighlightDone={() => setHighlightedEventIds([])}
-              onUpdateEvent={(updated) => setSchedule((s) => ({ ...s, events: s.events.map((e) => e.id === updated.id ? updated : e) }))}
-              onDeleteEvent={(id) => setSchedule((s) => ({ ...s, events: s.events.filter((e) => e.id !== id) }))}
-            />
-          </div>
+        <main className="flex-1 overflow-hidden p-4">
+          <Calendar
+            events={schedule.events}
+            highlightedEventIds={highlightedEventIds}
+            onHighlightDone={() => setHighlightedEventIds([])}
+            onUpdateEvent={(updated) => setSchedule((s) => ({ ...s, events: s.events.map((e) => e.id === updated.id ? updated : e) }))}
+            onDeleteEvent={(id) => setSchedule((s) => ({ ...s, events: s.events.filter((e) => e.id !== id) }))}
+          />
         </main>
 
         {/* Chat panel */}
@@ -391,7 +369,7 @@ export default function HomePage() {
           </div>
           {error && <p className="text-xs text-red-500 px-4 pt-2">{error}</p>}
           <div className="flex-1 overflow-hidden">
-            <Chat messages={messages} onSend={sendMessage} loading={loading} pendingOptions={pendingOptions} onSelectOption={handleSelectOption} />
+            <Chat messages={messages} onSend={sendMessage} loading={loading} />
           </div>
         </aside>
       </div>
