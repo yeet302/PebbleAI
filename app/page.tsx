@@ -268,24 +268,31 @@ export default function HomePage() {
     localStorage.setItem(MODE_KEY, mode);
   };
 
-  const handleOpenReschedule = async () => {
+  const handleOpenReschedule = () => {
+    setRescheduleOptions([]);
     setRescheduleLoading(true);
+    setShowReschedule(true);
     setError(null);
-    try {
-      const res = await fetch("/api/reschedule", {
+
+    const modes: OptimizationMode[] = ["sleep", "productivity", "fitness"];
+    let completed = 0;
+
+    modes.forEach((mode) => {
+      fetch("/api/reschedule", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ schedule, profile }),
-      });
-      if (!res.ok) throw new Error("Failed to generate reschedule options");
-      const options: SchedulingOption[] = await res.json();
-      setRescheduleOptions(options);
-      setShowReschedule(true);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setRescheduleLoading(false);
-    }
+        body: JSON.stringify({ schedule, profile, mode }),
+      })
+        .then((r) => r.json())
+        .then((option: SchedulingOption) => {
+          setRescheduleOptions((prev) => [...(prev ?? []), option]);
+        })
+        .catch(() => setError("Failed to generate one or more options"))
+        .finally(() => {
+          completed++;
+          if (completed === modes.length) setRescheduleLoading(false);
+        });
+    });
   };
 
   const handleApplyReschedule = (id: string) => {
@@ -365,12 +372,13 @@ export default function HomePage() {
   return (
     <div className="h-screen overflow-hidden flex flex-col">
       {!started && <Landing onImport={(events) => begin(events)} onSkip={() => begin()} />}
-      {showReschedule && rescheduleOptions && (
+      {showReschedule && (
         <SchedulePickerModal
-          options={rescheduleOptions}
+          options={rescheduleOptions ?? []}
           schedule={schedule}
+          loading={rescheduleLoading}
           onSelect={handleApplyReschedule}
-          onClose={() => { setShowReschedule(false); setRescheduleOptions(null); }}
+          onClose={() => { setShowReschedule(false); setRescheduleOptions(null); setRescheduleLoading(false); }}
         />
       )}
       {showScore && (
