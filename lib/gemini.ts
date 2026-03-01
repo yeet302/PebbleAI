@@ -1,9 +1,45 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { ScheduleState, ScheduleDiff, Message, ChatResponse } from "@/types";
+import { ScheduleState, ScheduleDiff, Message, ChatResponse, UserProfile } from "@/types";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
-const SYSTEM_PROMPT = `You are Pebble, a scheduling assistant that helps people find time in their busy lives for the goals and hobbies that matter to them.
+const ONBOARDING_PROMPT = `You are Pebble, a friendly scheduling assistant. You are meeting this user for the first time and need to learn a bit about them before helping them schedule.
+
+RESPONSE FORMAT — always return valid JSON, no markdown:
+{
+  "message": "what you say to the user",
+  "diff": null
+}
+
+Only emit a diff when you have collected ALL required fields and are ready to save the profile:
+{
+  "message": "Great, I have everything I need! ...",
+  "diff": {
+    "setProfile": {
+      "name": "...",
+      "wakeTime": "HH:MM",
+      "sleepTime": "HH:MM",
+      "energyPeak": "morning" | "evening",
+      "sessionLengthMinutes": number,
+      "freeDays": ["Saturday", "Sunday"],
+      "notes": "optional"
+    }
+  }
+}
+
+INTERVIEW RULES:
+- Ask exactly ONE question at a time, in a warm and conversational tone.
+- Question order: 1) name → 2) wake/sleep times → 3) energy peak (morning or evening person?) → 4) preferred session length → 5) free days
+- Do NOT schedule any goals or events during onboarding — just collect info.
+- Only emit "setProfile" in the diff once ALL five required fields (name, wakeTime, sleepTime, energyPeak, sessionLengthMinutes, freeDays) are collected.
+- If the user sends "[REDO PREFERENCES]", treat it as a fresh start: greet them warmly and restart from question 1 (name).
+- After emitting setProfile, give a brief warm summary and say you're ready to help them schedule.
+- Today's date is ${new Date().toISOString().split("T")[0]}.`;
+
+const SCHEDULING_PROMPT = `You are Pebble, a scheduling assistant that helps people find time in their busy lives for the goals and hobbies that matter to them.
+
+USER PROFILE:
+{PROFILE_PLACEHOLDER}
 
 RESPONSE FORMAT — always return valid JSON, no markdown:
 {
@@ -19,7 +55,7 @@ Diff schema (use null if not making changes yet):
 
 Event fields: id (uuid), title, date (YYYY-MM-DD), startTime (HH:MM), endTime (HH:MM),
   category ("class"|"study"|"gym"|"work"|"goal"|"personal"), source ("pebble"), description?, recurring ("daily"|"weekly"|"none"),
-  goalId (string — set this to the goal's id when creating sessions for a goal)
+  goalId (string — set this to the goal's id when creating Pebbles for a goal)
 
 Goal fields: id (uuid), title, type ("short-term"|"long-term"), description?, deadline?
 
@@ -27,6 +63,11 @@ CORE RULES:
 - Events with source "imported" are the user's real commitments — NEVER modify, move, or delete them.
 - Only schedule new events in genuinely free slots (no overlap with imported events).
 - Always set source to "pebble" on any event you create.
+- Respect the user's wakeTime and sleepTime — never schedule Pebbles outside those hours.
+- On the user's freeDays, avoid scheduling unless they explicitly ask.
+- Prefer scheduling during the user's energyPeak time of day when possible.
+- Use sessionLengthMinutes as the default Pebble length unless the user specifies otherwise.
+- Always address the user by name ({NAME_PLACEHOLDER}) occasionally to keep things personal.
 
 DIFF RULES:
 - addEvents: only truly NEW events in free time slots.
@@ -35,30 +76,52 @@ DIFF RULES:
 - Leave any array empty if nothing changes in that category.
 
 DAILY CHECK-IN:
-- When the conversation starts with a check-in prompt listing incomplete sessions, ask the user which ones they completed in a friendly, conversational way.
-- Based on their response, return a diff with updateEvents setting completed: true on the sessions they confirm doing.
+- When the conversation starts with a check-in prompt listing incomplete Pebbles, ask the user which ones they completed in a friendly, conversational way.
+- Based on their response, return a diff with updateEvents setting completed: true on the Pebbles they confirm doing.
 - If they say they did all of them, mark all as complete. If they skipped some, only mark the ones they did.
 - After updating, give a brief encouraging message about their progress.
 
 BEHAVIOR:
 - Your job is to help users achieve their goals by finding realistic time in their existing schedule.
 - Every goal MUST have a deadline. If the user doesn't provide one, ask for it before scheduling anything.
-- Once you have the goal and deadline, work backwards: figure out how many sessions are needed and spread them across the available time.
+- Once you have the goal and deadline, work backwards: figure out how many Pebbles are needed and spread them across the available time.
 - If other details are vague (frequency, duration), make a reasonable decision — don't ask more than 1 follow-up question beyond the deadline.
-- When adding a goal, add it to addGoals (with deadline set) AND schedule sessions in addEvents between today and the deadline.
+- When adding a goal, add it to addGoals (with deadline set) AND schedule Pebbles in addEvents between today and the deadline.
+- Call scheduled blocks "Pebbles" — never "sessions".
 - Keep responses short and conversational.
 - Today's date is ${new Date().toISOString().split("T")[0]}.`;
+
+export function buildSystemPrompt(profile: UserProfile | null): string {
+  if (profile === null) return ONBOARDING_PROMPT;
+
+  const profileBullets = [
+    `- Name: ${profile.name}`,
+    `- Wake time: ${profile.wakeTime}`,
+    `- Sleep time: ${profile.sleepTime}`,
+    `- Energy peak: ${profile.energyPeak}`,
+    `- Preferred Pebble length: ${profile.sessionLengthMinutes} minutes`,
+    `- Free days: ${profile.freeDays.length > 0 ? profile.freeDays.join(", ") : "none specified"}`,
+    profile.notes ? `- Notes: ${profile.notes}` : null,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  return SCHEDULING_PROMPT.replace("{PROFILE_PLACEHOLDER}", profileBullets).replace(
+    "{NAME_PLACEHOLDER}",
+    profile.name
+  );
+}
 
 function buildPrompt(messages: Message[], currentState: ScheduleState): string {
   const summary = {
     goals: currentState.goals.map((g) => {
-      const sessions = currentState.events.filter((e) => e.goalId === g.id && e.source === "pebble");
+      const pebbles = currentState.events.filter((e) => e.goalId === g.id && e.source === "pebble");
       return {
         id: g.id,
         title: g.title,
         deadline: g.deadline,
-        sessionsCompleted: sessions.filter((e) => e.completed).length,
-        sessionsTotal: sessions.length,
+        pebblesCompleted: pebbles.filter((e) => e.completed).length,
+        pebblesTotal: pebbles.length,
       };
     }),
     importedEvents: currentState.events
@@ -80,10 +143,29 @@ ${history}
 Respond with JSON only.`;
 }
 
-function applyDiff(current: ScheduleState, diff: Partial<ScheduleDiff>): { state: ScheduleState; changedEventIds: string[] } {
+function applyDiff(
+  current: ScheduleState,
+  diff: Partial<ScheduleDiff>
+): { state: ScheduleState; changedEventIds: string[]; setProfile?: UserProfile } {
   let events = [...current.events];
   let goals = [...current.goals];
   const changedEventIds: string[] = [];
+
+  // Extract setProfile separately — validate required fields before accepting
+  let setProfile: UserProfile | undefined;
+  if (diff.setProfile) {
+    const p = diff.setProfile;
+    if (
+      p.name &&
+      p.wakeTime &&
+      p.sleepTime &&
+      p.energyPeak &&
+      p.sessionLengthMinutes &&
+      p.freeDays
+    ) {
+      setProfile = p;
+    }
+  }
 
   // Safety: ignore mass deletions (likely a model error, not user intent)
   const safeToRemove = (ids: string[], total: number) => ids.length <= Math.max(5, total * 0.3);
@@ -96,7 +178,7 @@ function applyDiff(current: ScheduleState, diff: Partial<ScheduleDiff>): { state
   if (diff.updateEvents?.length) {
     events = events.map((e) => {
       const u = diff.updateEvents!.find((u) => u.id === e.id);
-      return u ? { ...e, ...u } : e;  // merge so AI can send partial updates
+      return u ? { ...e, ...u } : e;
     });
     changedEventIds.push(...diff.updateEvents.map((u) => u.id));
   }
@@ -113,7 +195,7 @@ function applyDiff(current: ScheduleState, diff: Partial<ScheduleDiff>): { state
   if (diff.addGoals?.length)
     goals = [...goals, ...diff.addGoals];
 
-  return { state: { events, goals }, changedEventIds };
+  return { state: { events, goals }, changedEventIds, setProfile };
 }
 
 function parseJSON(raw: string): unknown {
@@ -135,19 +217,20 @@ function parseJSON(raw: string): unknown {
 
 export async function chat(
   messages: Message[],
-  currentState: ScheduleState
-): Promise<{ response: ChatResponse; updatedState: ScheduleState; changedEventIds: string[] }> {
+  currentState: ScheduleState,
+  profile: UserProfile | null
+): Promise<{ response: ChatResponse; updatedState: ScheduleState; changedEventIds: string[]; setProfile?: UserProfile }> {
   const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
   const result = await model.generateContent([
-    { text: SYSTEM_PROMPT },
+    { text: buildSystemPrompt(profile) },
     { text: buildPrompt(messages, currentState) },
   ]);
 
   const parsed = parseJSON(result.response.text()) as ChatResponse;
-  const { state: updatedState, changedEventIds } = parsed.diff
+  const { state: updatedState, changedEventIds, setProfile } = parsed.diff
     ? applyDiff(currentState, parsed.diff)
-    : { state: currentState, changedEventIds: [] };
+    : { state: currentState, changedEventIds: [], setProfile: undefined };
 
-  return { response: parsed, updatedState, changedEventIds };
+  return { response: parsed, updatedState, changedEventIds, setProfile };
 }

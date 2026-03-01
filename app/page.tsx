@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ScheduleState, Message, CalendarEvent } from "@/types";
+import { ScheduleState, Message, CalendarEvent, UserProfile } from "@/types";
 import Calendar from "@/components/Calendar";
 import GoalList from "@/components/GoalList";
 import Chat from "@/components/Chat";
@@ -15,6 +15,7 @@ const CHECKIN_KEY = "pebble-checkin-date";
 const GC_ACCESS_KEY = "pebble-gc-access";
 const GC_REFRESH_KEY = "pebble-gc-refresh";
 const GC_EXPIRY_KEY = "pebble-gc-expiry";
+const PROFILE_KEY = "pebble-profile";
 const INITIAL_STATE: ScheduleState = { events: [], goals: [] };
 
 export default function HomePage() {
@@ -26,6 +27,7 @@ export default function HomePage() {
   const [showReview, setShowReview] = useState(false);
   const [highlightedEventIds, setHighlightedEventIds] = useState<string[]>([]);
   const [gcConnected, setGcConnected] = useState(false);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
 
   useEffect(() => {
     // 1. Check URL params for post-OAuth redirect tokens
@@ -52,6 +54,10 @@ export default function HomePage() {
     if (m) setMessages(JSON.parse(m));
     if (localStorage.getItem(STARTED_KEY)) setStarted(true);
 
+    // Load profile
+    const storedProfile = localStorage.getItem(PROFILE_KEY);
+    if (storedProfile) setProfile(JSON.parse(storedProfile));
+
     // 2. Google Calendar sync
     const accessToken = localStorage.getItem(GC_ACCESS_KEY);
     if (accessToken) {
@@ -77,20 +83,21 @@ export default function HomePage() {
           });
           // Auto-start if returning from OAuth and not yet started
           if (gcAccessParam && !localStorage.getItem(STARTED_KEY)) {
+            const loadedProfile: UserProfile | null = JSON.parse(localStorage.getItem(PROFILE_KEY) ?? "null");
             const next: ScheduleState = { events: data.events, goals: [] };
             setSchedule(next);
             setStarted(true);
             localStorage.setItem(STARTED_KEY, "1");
-            setMessages([{
-              role: "assistant",
-              content: `I've loaded ${data.events.length} events from your Google Calendar. What goal or hobby do you want to make time for?`,
-            }]);
+            const greeting = loadedProfile
+              ? `Welcome back, ${loadedProfile.name}! I've loaded ${data.events.length} events from your Google Calendar. What goal do you want to work on?`
+              : `I've loaded ${data.events.length} events from your Google Calendar. Before we start scheduling, I'd love to learn a bit about you... What's your name?`;
+            setMessages([{ role: "assistant", content: greeting }]);
           }
         })
         .catch(() => {});
     }
 
-    // 3. Daily check-in: once per day if there are incomplete past/today Pebble sessions
+    // 3. Daily check-in: once per day if there are incomplete past/today Pebbles
     const today = new Date().toISOString().split("T")[0];
     const lastCheckin = localStorage.getItem(CHECKIN_KEY);
     if (lastCheckin !== today && localStorage.getItem(STARTED_KEY)) {
@@ -104,6 +111,7 @@ export default function HomePage() {
           content: `[DAILY CHECK-IN] Today is ${today}. These Pebble sessions are scheduled but not yet marked complete:\n${list}\n\nPlease ask me which ones I completed.`,
         };
         localStorage.setItem(CHECKIN_KEY, today);
+        const currentProfile: UserProfile | null = JSON.parse(localStorage.getItem(PROFILE_KEY) ?? "null");
         // Trigger after a short delay so the UI is ready
         setTimeout(() => {
           setMessages((prev) => {
@@ -111,7 +119,7 @@ export default function HomePage() {
             fetch("/api/schedule", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ messages: next, currentState: loadedSchedule }),
+              body: JSON.stringify({ messages: next, currentState: loadedSchedule, profile: currentProfile }),
             })
               .then((r) => r.json())
               .then((data) => {
@@ -140,13 +148,20 @@ export default function HomePage() {
     setStarted(true);
     localStorage.setItem(STARTED_KEY, "1");
 
-    const greeting: Message = {
-      role: "assistant",
-      content: importedEvents.length
-        ? `I've loaded ${importedEvents.length} events from your calendar. What goal or hobby do you want to make time for?`
-        : "What goal or hobby do you want to make time for?",
-    };
-    setMessages([greeting]);
+    const loadedProfile: UserProfile | null = JSON.parse(localStorage.getItem(PROFILE_KEY) ?? "null");
+
+    let greeting: string;
+    if (loadedProfile) {
+      greeting = importedEvents.length
+        ? `Welcome back, ${loadedProfile.name}! I've loaded ${importedEvents.length} events from your calendar. What goal do you want to work on?`
+        : `Welcome back, ${loadedProfile.name}! What goal do you want to work on?`;
+    } else {
+      greeting = importedEvents.length
+        ? `Hi! I'm Pebble. I've loaded ${importedEvents.length} events from your calendar. Before we start scheduling, I'd love to learn a bit about you... What's your name?`
+        : "Hi! I'm Pebble. Before we start scheduling, I'd love to learn a bit about you... What's your name?";
+    }
+
+    setMessages([{ role: "assistant", content: greeting }]);
   };
 
   const sendMessage = async (text: string) => {
@@ -160,14 +175,18 @@ export default function HomePage() {
       const res = await fetch("/api/schedule", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: nextMessages, currentState: schedule }),
+        body: JSON.stringify({ messages: nextMessages, currentState: schedule, profile }),
       });
       if (!res.ok) throw new Error("Failed to reach AI");
-      const data: { message: string; schedule: ScheduleState; changedEventIds: string[] } = await res.json();
+      const data: { message: string; schedule: ScheduleState; changedEventIds: string[]; profile: UserProfile | null } = await res.json();
 
       setMessages((prev) => [...prev, { role: "assistant", content: data.message }]);
       setSchedule(data.schedule);
       if (data.changedEventIds?.length) setHighlightedEventIds(data.changedEventIds);
+      if (data.profile !== null) {
+        setProfile(data.profile);
+        localStorage.setItem(PROFILE_KEY, JSON.stringify(data.profile));
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -180,12 +199,14 @@ export default function HomePage() {
     setMessages([]);
     setStarted(false);
     setGcConnected(false);
+    setProfile(null);
     localStorage.removeItem(SCHEDULE_KEY);
     localStorage.removeItem(MESSAGES_KEY);
     localStorage.removeItem(STARTED_KEY);
     localStorage.removeItem(GC_ACCESS_KEY);
     localStorage.removeItem(GC_REFRESH_KEY);
     localStorage.removeItem(GC_EXPIRY_KEY);
+    localStorage.removeItem(PROFILE_KEY);
   };
 
   const handleGcDisconnect = () => {
@@ -195,6 +216,33 @@ export default function HomePage() {
     localStorage.removeItem(GC_EXPIRY_KEY);
     // Remove imported events, keep pebble events
     setSchedule((prev) => ({ ...prev, events: prev.events.filter((e) => e.source !== "imported") }));
+  };
+
+  const handleEditPreferences = async () => {
+    setProfile(null);
+    localStorage.removeItem(PROFILE_KEY);
+    setLoading(true);
+    setError(null);
+
+    const redoMsg: Message = { role: "user", content: "[REDO PREFERENCES]" };
+    const nextMessages = [...messages, redoMsg];
+    setMessages(nextMessages);
+
+    try {
+      const res = await fetch("/api/schedule", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: nextMessages, currentState: schedule, profile: null }),
+      });
+      if (!res.ok) throw new Error("Failed to reach AI");
+      const data: { message: string; schedule: ScheduleState; changedEventIds: string[]; profile: UserProfile | null } = await res.json();
+
+      setMessages((prev) => [...prev, { role: "assistant", content: data.message }]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -233,6 +281,14 @@ export default function HomePage() {
                 Disconnect
               </button>
             </div>
+          )}
+          {started && profile && (
+            <button
+              onClick={handleEditPreferences}
+              className="text-xs text-gray-500 border border-gray-200 rounded-lg px-3 py-1.5 hover:border-blue-300 hover:text-blue-600 transition-colors"
+            >
+              Edit Preferences
+            </button>
           )}
           <button
             onClick={() => setShowReview(true)}

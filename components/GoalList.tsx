@@ -60,7 +60,7 @@ export default function GoalList({ goals, events }: GoalListProps) {
             {total > 0 && (
               <div className="space-y-1">
                 <div className="flex justify-between text-xs text-gray-600">
-                  <span>{completed} of {total} sessions done</span>
+                  <span>{completed} of {total} Pebbles done</span>
                   <span>{pct}%</span>
                 </div>
                 <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">

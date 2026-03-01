@@ -38,6 +38,16 @@ export interface ChatResponse {
   diff?: Partial<ScheduleDiff>;
 }
 
+export interface UserProfile {
+  name: string;
+  wakeTime: string;                    // "HH:MM"
+  sleepTime: string;                   // "HH:MM"
+  energyPeak: "morning" | "evening";
+  sessionLengthMinutes: number;
+  freeDays: string[];                  // e.g. ["Saturday", "Sunday"]
+  notes?: string;
+}
+
 export interface ScheduleDiff {
   addEvents: CalendarEvent[];
   updateEvents: CalendarEvent[];
@@ -45,4 +55,5 @@ export interface ScheduleDiff {
   addGoals: Goal[];
   updateGoals: Goal[];
   removeGoalIds: string[];
+  setProfile?: UserProfile;
 }
