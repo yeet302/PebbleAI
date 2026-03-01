@@ -45,7 +45,7 @@ export default function EventPopover({ event, onUpdate, onDelete, onClose }: Eve
               <p className="font-semibold text-gray-800">{event.title}</p>
             ) : (
               <input
-                className="font-semibold text-gray-800 text-base w-full focus:outline-none border-b border-transparent focus:border-blue-400 pb-0.5"
+                className="font-semibold text-gray-800 text-base w-full focus:outline-none border-b border-transparent focus:border-green-500 pb-0.5"
                 value={form.title}
                 onChange={(e) => set("title", e.target.value)}
               />
@@ -63,7 +63,7 @@ export default function EventPopover({ event, onUpdate, onDelete, onClose }: Eve
                 <p className="text-sm text-gray-700">{event.date}</p>
               ) : (
                 <input type="date" value={form.date} onChange={(e) => set("date", e.target.value)}
-                  className="w-full text-sm border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                  className="w-full text-sm border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-green-500" />
               )}
             </div>
           </div>
@@ -75,7 +75,7 @@ export default function EventPopover({ event, onUpdate, onDelete, onClose }: Eve
                 <p className="text-sm text-gray-700">{event.startTime}</p>
               ) : (
                 <input type="time" value={form.startTime} onChange={(e) => set("startTime", e.target.value)}
-                  className="w-full text-sm border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                  className="w-full text-sm border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-green-500" />
               )}
             </div>
             <div className="flex-1 space-y-1">
@@ -84,7 +84,7 @@ export default function EventPopover({ event, onUpdate, onDelete, onClose }: Eve
                 <p className="text-sm text-gray-700">{event.endTime}</p>
               ) : (
                 <input type="time" value={form.endTime} onChange={(e) => set("endTime", e.target.value)}
-                  className="w-full text-sm border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                  className="w-full text-sm border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-green-500" />
               )}
             </div>
           </div>
@@ -93,7 +93,7 @@ export default function EventPopover({ event, onUpdate, onDelete, onClose }: Eve
             <div className="space-y-1">
               <label className="text-xs text-gray-600">Category</label>
               <select value={form.category} onChange={(e) => set("category", e.target.value as EventCategory)}
-                className="w-full text-sm border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 capitalize">
+                className="w-full text-sm border border-gray-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-green-500 capitalize">
                 {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
@@ -132,7 +132,7 @@ export default function EventPopover({ event, onUpdate, onDelete, onClose }: Eve
             <button onClick={handleDelete} className="text-xs text-red-400 hover:text-red-600 transition-colors">
               Delete event
             </button>
-            <button onClick={handleSave} className="rounded-lg bg-blue-600 text-white px-4 py-1.5 text-sm font-medium hover:bg-blue-700 transition-colors">
+            <button onClick={handleSave} className="rounded-lg bg-green-800 text-white px-4 py-1.5 text-sm font-medium hover:bg-green-900 transition-colors">
               Save
             </button>
           </div>

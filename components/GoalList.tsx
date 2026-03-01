@@ -65,7 +65,7 @@ export default function GoalList({ goals, events }: GoalListProps) {
                 </div>
                 <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-blue-600 rounded-full transition-all"
+                    className="h-full bg-green-700 rounded-full transition-all"
                     style={{ width: `${pct}%` }}
                   />
                 </div>

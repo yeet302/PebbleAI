@@ -396,7 +396,7 @@ export default function HomePage() {
       <header className="border-b bg-white px-6 py-4 flex items-center justify-between shadow-sm flex-shrink-0">
         <div className="flex items-center gap-2">
           <img src="/pebble_logo.png" alt="Pebble" className="w-8 h-8 rounded-lg object-cover" />
-          <h1 className="text-xl font-bold text-blue-600">Pebble</h1>
+          <h1 className="text-xl font-bold text-green-800">Pebble</h1>
         </div>
         <div className="flex items-center gap-4">
           {gcConnected && (
@@ -421,7 +421,7 @@ export default function HomePage() {
           {started && profile && (
             <button
               onClick={handleEditPreferences}
-              className="text-xs text-gray-500 border border-gray-200 rounded-lg px-3 py-1.5 hover:border-blue-300 hover:text-blue-600 transition-colors"
+              className="text-xs text-gray-500 border border-gray-200 rounded-lg px-3 py-1.5 hover:border-green-300 hover:text-green-800 transition-colors"
             >
               Edit Preferences
             </button>
@@ -430,14 +430,14 @@ export default function HomePage() {
             <button
               onClick={handleOpenReschedule}
               disabled={rescheduleLoading}
-              className="text-xs text-white bg-blue-600 border border-blue-600 rounded-lg px-3 py-1.5 hover:bg-blue-700 transition-colors disabled:opacity-60"
+              className="text-xs text-white bg-green-800 border border-green-800 rounded-lg px-3 py-1.5 hover:bg-green-900 transition-colors disabled:opacity-60"
             >
               {rescheduleLoading ? "Loading…" : "Reschedule"}
             </button>
           )}
           <button
             onClick={() => setShowReview(true)}
-            className="text-xs text-gray-500 border border-gray-200 rounded-lg px-3 py-1.5 hover:border-blue-300 hover:text-blue-600 transition-colors"
+            className="text-xs text-gray-500 border border-gray-200 rounded-lg px-3 py-1.5 hover:border-green-300 hover:text-green-800 transition-colors"
           >
             Review Week
           </button>

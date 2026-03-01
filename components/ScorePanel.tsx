@@ -10,7 +10,7 @@ interface ScorePanelProps {
 
 function scoreColor(s: number) {
   if (s >= 80) return { bar: "bg-green-500", text: "text-green-600" };
-  if (s >= 60) return { bar: "bg-blue-500",  text: "text-blue-600"  };
+  if (s >= 60) return { bar: "bg-green-600",  text: "text-green-700"  };
   if (s >= 40) return { bar: "bg-amber-500", text: "text-amber-600" };
   return          { bar: "bg-red-500",   text: "text-red-600"   };
 }
@@ -48,7 +48,7 @@ export default function ScorePanel({ score, loading, onViewDetails }: ScorePanel
       {/* Overall — clickable to open full detail */}
       <button
         onClick={onViewDetails}
-        className="w-full text-left rounded-xl border border-gray-100 bg-white p-3 shadow-sm hover:border-blue-200 transition-colors space-y-2"
+        className="w-full text-left rounded-xl border border-gray-100 bg-white p-3 shadow-sm hover:border-green-200 transition-colors space-y-2"
       >
         <div className="flex items-center justify-between">
           <span className={`text-2xl font-bold ${overall.text}`}>{score.overall}</span>

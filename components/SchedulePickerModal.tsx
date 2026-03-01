@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ScheduleState, SchedulingOption } from "@/types";
 import Calendar from "@/components/Calendar";
 
@@ -23,6 +23,13 @@ const ALL_MODES = ["sleep", "productivity", "fitness"] as const;
 export default function SchedulePickerModal({ options, schedule, onSelect, onClose, loading = false }: SchedulePickerModalProps) {
   const [activeId, setActiveId] = useState<string>(options[0]?.id ?? "sleep");
   const active = options.find((o) => o.id === activeId);
+
+  // Auto-switch to the first ready tab if the current active tab isn't loaded yet
+  useEffect(() => {
+    if (!active && options.length > 0) {
+      setActiveId(options[0].id);
+    }
+  }, [options, active]);
   const meta = OPTION_META[activeId] ?? OPTION_META.fitness;
 
   return (

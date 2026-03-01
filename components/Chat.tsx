@@ -38,7 +38,7 @@ export default function Chat({ messages, onSend, loading }: ChatProps) {
             <div
               className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm ${
                 m.role === "user"
-                  ? "bg-blue-600 text-white rounded-br-sm"
+                  ? "bg-green-800 text-white rounded-br-sm"
                   : "bg-gray-100 text-gray-800 rounded-bl-sm"
               }`}
             >
@@ -68,13 +68,13 @@ export default function Chat({ messages, onSend, loading }: ChatProps) {
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder="e.g. I want to prep for coding interviews"
-          className="flex-1 rounded-full border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 rounded-full border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
           disabled={loading}
         />
         <button
           type="submit"
           disabled={loading || !value.trim()}
-          className="rounded-full bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+          className="rounded-full bg-green-800 px-5 py-2 text-sm font-medium text-white hover:bg-green-900 disabled:opacity-50"
         >
           Send
         </button>

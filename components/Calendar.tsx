@@ -140,7 +140,7 @@ function WeekView({ days, events, previewEvents, today, highlights, onEventClick
             <div key={name} className="flex-1 text-center py-3 text-xs font-semibold text-gray-600 border-l border-gray-200">
               <div>{name}</div>
               <div className={`text-base font-bold mt-0.5 w-8 h-8 flex items-center justify-center rounded-full mx-auto
-                ${isToday ? "bg-blue-500 text-white" : "text-gray-800"}`}>
+                ${isToday ? "bg-green-700 text-white" : "text-gray-800"}`}>
                 {days[i].slice(8)}
               </div>
             </div>
@@ -239,7 +239,7 @@ function MonthView({ year, month, events, today, onDayClick }: {
                 {date && (
                   <>
                     <div className={`text-xs font-semibold w-6 h-6 flex items-center justify-center rounded-full mb-1
-                      ${isToday ? "bg-blue-500 text-white" : "text-gray-800"}`}>
+                      ${isToday ? "bg-green-700 text-white" : "text-gray-800"}`}>
                       {date.slice(8)}
                     </div>
                     <div className="space-y-0.5">
@@ -280,7 +280,7 @@ function YearView({ year, events, onMonthClick }: {
             <div
               key={month}
               onClick={() => onMonthClick(month)}
-              className="border border-gray-200 rounded-xl p-3 cursor-pointer hover:border-blue-300 hover:shadow-sm transition-all"
+              className="border border-gray-200 rounded-xl p-3 cursor-pointer hover:border-green-300 hover:shadow-sm transition-all"
             >
               <p className="text-xs font-semibold text-gray-700 mb-2">{MONTH_NAMES[month]}</p>
               <div className="grid grid-cols-7 gap-px">
@@ -294,10 +294,10 @@ function YearView({ year, events, onMonthClick }: {
                     <div key={i} className="flex items-center justify-center" style={{ height: 14 }}>
                       {date && (
                         <div className={`rounded-full flex items-center justify-center
-                          ${isToday ? "bg-blue-500 text-white" : hasEvent ? "bg-blue-100" : ""}
+                          ${isToday ? "bg-green-700 text-white" : hasEvent ? "bg-green-100" : ""}
                         `} style={{ width: 14, height: 14, fontSize: 8 }}>
                           {hasEvent && !isToday && (
-                            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 block" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-green-500 block" />
                           )}
                           {isToday && <span style={{ fontSize: 7 }}>{date.slice(8)}</span>}
                         </div>
@@ -385,7 +385,7 @@ export default function Calendar({ events, previewEvents = [], highlightedEventI
         <button onClick={() => navigate(-1)} className="rounded px-2 py-1 text-sm text-gray-700 hover:bg-gray-100">← Prev</button>
         <span className="text-sm font-semibold text-gray-800 w-36 text-center">{label}</span>
         <button onClick={() => navigate(1)} className="rounded px-2 py-1 text-sm text-gray-700 hover:bg-gray-100">Next →</button>
-        <button onClick={() => { setCurrent(new Date()); }} className="rounded px-2 py-1 text-xs text-blue-600 hover:bg-blue-50">Today</button>
+        <button onClick={() => { setCurrent(new Date()); }} className="rounded px-2 py-1 text-xs text-green-800 hover:bg-green-50">Today</button>
 
         {onSetMode && (
           <div className="flex rounded-lg border border-gray-200 overflow-hidden text-xs">
@@ -411,7 +411,7 @@ export default function Calendar({ events, previewEvents = [], highlightedEventI
             <button
               key={v}
               onClick={() => setView(v)}
-              className={`px-3 py-1.5 capitalize transition-colors ${view === v ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}
+              className={`px-3 py-1.5 capitalize transition-colors ${view === v ? "bg-green-800 text-white" : "text-gray-700 hover:bg-gray-50"}`}
             >
               {v}
             </button>

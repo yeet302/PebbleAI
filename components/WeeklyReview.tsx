@@ -121,7 +121,7 @@ export default function WeeklyReview({ events, onSubmit, onClose }: WeeklyReview
               onChange={(e) => setReflection(e.target.value)}
               placeholder="e.g. I skipped the gym twice. Study blocks were too long. I want more buffer time in the evenings..."
               rows={4}
-              className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 resize-none"
             />
           </div>
         </div>
@@ -132,7 +132,7 @@ export default function WeeklyReview({ events, onSubmit, onClose }: WeeklyReview
           <button
             onClick={handleSubmit}
             disabled={!reflection.trim()}
-            className="rounded-lg bg-blue-600 text-white px-5 py-2 text-sm font-medium hover:bg-blue-700 disabled:opacity-40"
+            className="rounded-lg bg-green-800 text-white px-5 py-2 text-sm font-medium hover:bg-green-900 disabled:opacity-40"
           >
             Send to AI →
           </button>
