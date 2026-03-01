@@ -16,9 +16,10 @@ Schema:
       "date": "YYYY-MM-DD",
       "startTime": "HH:MM",
       "endTime": "HH:MM",
-      "category": "class" | "study" | "gym" | "work" | "goal" | "personal" | "sleep" | "meal" | "break",
+      "category": "work" | "leisure" | "rest" | "class" | "study" | "gym" | "goal" | "personal" | "sleep" | "meal" | "break",
       "description": "string (optional)",
-      "recurring": "daily" | "weekly" | "none"
+      "recurring": "daily" | "weekly" | "none",
+      "completionStatus": "pending" | "completed" | "not-completed" (optional)
     }
   ],
   "goals": [
@@ -36,9 +37,24 @@ Rules:
 - Apply the instruction exactly: add, update, move, or delete events/goals as requested.
 - Keep all unrelated events/goals unchanged.
 - Preserve existing event IDs when modifying events. Generate new UUIDs for new items.
+- Preserve existing completionStatus values for unchanged/updated events.
+- For new events, default completionStatus to "pending".
 - When the user adds recurring events, create individual entries for the next 4 weeks.
 - When the user adds a goal, always generate concrete calendar events that support it for the next 4 weeks.
-- Use category "sleep" for sleep/rest, "meal" for breakfast/lunch/dinner, and "break" for short recovery blocks.
+- Calendar type defaults:
+  - "work": classes, studying, coding, meetings, project work, deadlines.
+  - "leisure": hobbies, social activities, gaming, entertainment, optional fun activities.
+  - "rest": recovery-focused blocks.
+- Keep specific categories when clearly applicable:
+  - use "sleep" for sleep, naps, bedtime.
+  - use "meal" for breakfast/lunch/dinner.
+  - use "break" for short recovery blocks.
+  - use "gym" for workouts.
+  - use "study" for focused studying.
+  - use "class" for lectures/labs.
+- Automatically classify each new/updated event into the best category using the above defaults.
+- Only ask for category/calendar type if the user's intent is ambiguous and cannot be inferred from context.
+- If the user mentions a location (examples: "takes place at X", "study at college library", "at the gym"), preserve that location in the event description in natural language.
 - Prioritize goals when scheduling study/work blocks.
 - Keep schedules realistic - include breaks, sleep, and meals.
 - Today's date is ${new Date().toISOString().split("T")[0]}. Use this to generate dates relative to today.`;
@@ -110,9 +126,10 @@ ScheduleState schema:
       "date": "YYYY-MM-DD",
       "startTime": "HH:MM",
       "endTime": "HH:MM",
-      "category": "class" | "study" | "gym" | "work" | "goal" | "personal" | "sleep" | "meal" | "break",
+      "category": "work" | "leisure" | "rest" | "class" | "study" | "gym" | "goal" | "personal" | "sleep" | "meal" | "break",
       "description": "string (optional)",
-      "recurring": "daily" | "weekly" | "none"
+      "recurring": "daily" | "weekly" | "none",
+      "completionStatus": "pending" | "completed" | "not-completed" (optional)
     }
   ],
   "goals": [
@@ -129,7 +146,14 @@ ScheduleState schema:
 Rules:
 - Keep unrelated events/goals unchanged.
 - Preserve existing IDs when modifying existing events.
+- Preserve existing completionStatus values for existing events.
+- For new events, set completionStatus to "pending" unless user explicitly specifies otherwise.
 - For recurring user requests, expand into concrete entries for the next 4 weeks.
+- Auto-classify events into category defaults:
+  - "work", "leisure", "rest" as primary high-level choices.
+  - keep specific categories ("class", "study", "gym", "sleep", "meal", "break") when clearly indicated.
+- Ask a category follow-up only when intent is genuinely ambiguous; otherwise infer and proceed.
+- Always preserve user-provided location context (for example phrases using "at ...") in event descriptions.
 - Today's date is ${new Date().toISOString().split("T")[0]}.`;
 
 export async function assistantScheduleTurn(

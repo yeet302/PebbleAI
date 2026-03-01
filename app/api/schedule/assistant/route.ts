@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { assistantScheduleTurn, AssistantMessage } from "@/lib/gemini";
 import { ScheduleState } from "@/types";
+import { readScheduleDb, writeScheduleDb } from "@/lib/schedule-db";
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,7 +14,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Conversation is required" }, { status: 400 });
     }
 
-    const result = await assistantScheduleTurn(currentState, conversation);
+    const dbState = await readScheduleDb();
+    const baseState =
+      dbState.events.length > 0 || dbState.goals.length > 0 ? dbState : currentState;
+
+    const result = await assistantScheduleTurn(baseState, conversation);
+    if (result.updatedSchedule) {
+      await writeScheduleDb(result.updatedSchedule);
+    }
     return NextResponse.json(result);
   } catch (err) {
     console.error("Schedule assistant API error:", err);

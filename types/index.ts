@@ -3,11 +3,15 @@ export type EventCategory =
   | "study"
   | "gym"
   | "work"
+  | "leisure"
+  | "rest"
   | "goal"
   | "personal"
   | "sleep"
   | "meal"
   | "break";
+
+export type EventCompletionStatus = "pending" | "completed" | "not-completed";
 
 export interface CalendarEvent {
   id: string;
@@ -18,6 +22,7 @@ export interface CalendarEvent {
   category: EventCategory;
   description?: string;
   recurring?: "daily" | "weekly" | "none";
+  completionStatus?: EventCompletionStatus;
 }
 
 export interface Goal {
