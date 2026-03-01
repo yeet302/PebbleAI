@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { CalendarEvent, OptimizationMode } from "@/types";
 import EventPopover from "@/components/EventPopover";
 
@@ -18,11 +18,11 @@ interface CalendarProps {
 type View = "week" | "month" | "year";
 
 // ── constants ────────────────────────────────────────────────────────────────
-const HOUR_HEIGHT = 64;
-const START_HOUR = 6;
-const END_HOUR = 23;
+const HOUR_HEIGHT = 56;
+const START_HOUR = 0;
+const END_HOUR = 24;
 const TOTAL_HOURS = END_HOUR - START_HOUR;
-const HOURS = Array.from({ length: TOTAL_HOURS }, (_, i) => START_HOUR + i);
+const HOURS = Array.from({ length: TOTAL_HOURS }, (_, i) => i);
 const DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
@@ -125,52 +125,125 @@ function layoutEvents(events: CalendarEvent[]) {
   });
 }
 
+// ── time-of-day bands ────────────────────────────────────────────────────────
+const TIME_BANDS = [
+  { start: 0,  end: 6,  className: "bg-blue-50/80" },    // sleep
+  { start: 6,  end: 9,  className: "bg-amber-50/70" },   // morning
+  { start: 18, end: 22, className: "bg-indigo-50/60" },  // evening
+  { start: 22, end: 24, className: "bg-blue-50/80" },    // sleep
+];
+
 // ── sub-views ────────────────────────────────────────────────────────────────
+function useCurrentTimeTop() {
+  const getTop = () => {
+    const now = new Date();
+    return ((now.getHours() * 60 + now.getMinutes()) / 60) * HOUR_HEIGHT;
+  };
+  const [top, setTop] = useState(getTop);
+  useEffect(() => {
+    const id = setInterval(() => setTop(getTop()), 60_000);
+    return () => clearInterval(id);
+  }, []);
+  return top;
+}
+
 function WeekView({ days, events, previewEvents, today, highlights, onEventClick }: { days: string[]; events: CalendarEvent[]; previewEvents: CalendarEvent[]; today: string; highlights: Set<string>; onEventClick: (e: CalendarEvent) => void }) {
   const previewIds = new Set(previewEvents.map((e) => e.id));
+  const nowTop = useCurrentTimeTop();
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Scroll to current time on mount
+  useEffect(() => {
+    if (scrollRef.current) {
+      const offset = Math.max(0, nowTop - 120);
+      scrollRef.current.scrollTop = offset;
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="flex flex-col flex-1 overflow-hidden border border-gray-200 rounded-xl">
       {/* Day headers */}
-      <div className="flex flex-shrink-0 border-b border-gray-200 bg-white">
-        <div className="w-14 flex-shrink-0" />
+      <div className="flex flex-shrink-0 border-b border-gray-200">
+        <div className="w-12 flex-shrink-0 bg-white border-r border-gray-200" />
         {DAY_NAMES.map((name, i) => {
           const isToday = days[i] === today;
+          const isWeekend = i >= 5;
+          const isSat = i === 5;
           return (
-            <div key={name} className="flex-1 text-center py-3 text-xs font-semibold text-gray-600 border-l border-gray-200">
+            <div
+              key={name}
+              className={`flex-1 text-center py-3 text-xs font-semibold border-l border-gray-200
+                ${isWeekend ? "bg-stone-100 text-stone-500" : "bg-white text-gray-600"}
+                ${isSat ? "border-l-2 border-l-stone-300" : ""}`}
+            >
               <div>{name}</div>
               <div className={`text-base font-bold mt-0.5 w-8 h-8 flex items-center justify-center rounded-full mx-auto
-                ${isToday ? "bg-green-700 text-white" : "text-gray-800"}`}>
+                ${isToday ? "bg-green-700 text-white" : isWeekend ? "text-stone-500" : "text-gray-800"}`}>
                 {days[i].slice(8)}
               </div>
             </div>
           );
         })}
       </div>
+
       {/* Scrollable grid */}
-      <div className="flex flex-1 overflow-y-auto">
-        <div className="w-14 flex-shrink-0 relative bg-white" style={{ height: TOTAL_HOURS * HOUR_HEIGHT }}>
+      <div ref={scrollRef} className="flex flex-1 overflow-y-auto">
+        {/* Time gutter */}
+        <div className="w-12 flex-shrink-0 relative bg-white border-r border-gray-200" style={{ height: TOTAL_HOURS * HOUR_HEIGHT }}>
           {HOURS.map((h) => (
-            <div key={h} className="absolute right-2 text-xs text-gray-500" style={{ top: (h - START_HOUR) * HOUR_HEIGHT - 8 }}>
-              {h === 12 ? "12pm" : h > 12 ? `${h - 12}pm` : `${h}am`}
+            <div key={h} className="absolute right-1.5 text-xs text-gray-400" style={{ top: (h - START_HOUR) * HOUR_HEIGHT - 8 }}>
+              {h === 0 ? "12am" : h === 12 ? "12pm" : h > 12 ? `${h - 12}pm` : `${h}am`}
             </div>
           ))}
         </div>
-        <div className="flex flex-1">
-          {days.map((date) => {
+
+        {/* Day columns */}
+        <div className="flex flex-1" style={{ height: TOTAL_HOURS * HOUR_HEIGHT }}>
+          {days.map((date, i) => {
+            const isWeekend = i >= 5;
+            const isSat = i === 5;
             const dayEvents = [
               ...events.filter((e) => e.date === date),
               ...previewEvents.filter((e) => e.date === date),
             ];
             const laid = layoutEvents(dayEvents);
             return (
-              <div key={date} className="flex-1 border-l border-gray-100 relative" style={{ height: TOTAL_HOURS * HOUR_HEIGHT }}>
+              <div
+                key={date}
+                className={`flex-1 border-l border-gray-100 relative
+                  ${isWeekend ? "bg-stone-50" : ""}
+                  ${isSat ? "border-l-2 border-l-stone-300" : ""}`}
+                style={{ height: TOTAL_HOURS * HOUR_HEIGHT }}
+              >
+                {/* Time-of-day tinting */}
+                {TIME_BANDS.map((band) => (
+                  <div
+                    key={band.start}
+                    className={`absolute inset-x-0 pointer-events-none ${band.className}`}
+                    style={{
+                      top: (band.start - START_HOUR) * HOUR_HEIGHT,
+                      height: (band.end - band.start) * HOUR_HEIGHT,
+                    }}
+                  />
+                ))}
+
+                {/* Hour grid lines */}
                 {HOURS.map((h) => (
                   <div key={h} className="absolute w-full border-t border-gray-100" style={{ top: (h - START_HOUR) * HOUR_HEIGHT }} />
                 ))}
                 {HOURS.map((h) => (
                   <div key={`${h}h`} className="absolute w-full border-t border-gray-50" style={{ top: (h - START_HOUR) * HOUR_HEIGHT + HOUR_HEIGHT / 2 }} />
                 ))}
+
+                {/* Current time marker */}
+                {date === today && (
+                  <div className="absolute inset-x-0 z-20 pointer-events-none flex items-center" style={{ top: nowTop }}>
+                    <div className="w-2 h-2 rounded-full bg-green-600 flex-shrink-0 -ml-1" />
+                    <div className="flex-1 h-px bg-green-600" />
+                  </div>
+                )}
+
+                {/* Events */}
                 {laid.map(({ event, slotIndex, totalSlots }) => {
                   const { top, height } = getEventStyle(event.startTime, event.endTime);
                   const isPreview = previewIds.has(event.id);
@@ -180,11 +253,11 @@ function WeekView({ days, events, previewEvents, today, highlights, onEventClick
                     <div
                       key={event.id}
                       onClick={isPreview ? undefined : () => onEventClick(event)}
-                      className={`absolute rounded-lg px-2 py-1 text-xs overflow-hidden shadow-sm transition-shadow ${colors} ${isPreview ? "border-2 border-dashed opacity-75 cursor-default" : "border-l-4 cursor-pointer"} ${!isPreview && highlights.has(event.id) ? "ring-2 ring-white ring-offset-1 animate-pulse shadow-lg" : ""}`}
+                      className={`absolute rounded-lg px-1.5 py-1 text-xs overflow-hidden shadow-sm transition-shadow ${colors} ${isPreview ? "border-2 border-dashed opacity-75 cursor-default" : "border-l-4 cursor-pointer"} ${!isPreview && highlights.has(event.id) ? "ring-2 ring-white ring-offset-1 animate-pulse shadow-lg" : ""}`}
                       style={{
                         top, height,
-                        left: `calc(${(slotIndex / totalSlots) * 100}% + 4px)`,
-                        right: `calc(${((totalSlots - slotIndex - 1) / totalSlots) * 100}% + 4px)`,
+                        left: `calc(${(slotIndex / totalSlots) * 100}% + 2px)`,
+                        right: `calc(${((totalSlots - slotIndex - 1) / totalSlots) * 100}% + 2px)`,
                       }}
                       title={`${event.title}\n${event.startTime}–${event.endTime}`}
                     >

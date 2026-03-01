@@ -29,10 +29,10 @@ export default function Landing({ onImport, onSkip }: LandingProps) {
       <div className="max-w-md w-full text-center space-y-8">
         {/* Logo */}
         <div className="flex flex-col items-center gap-3">
-          <img src="/pebble_logo.png" alt="Pebble" className="w-56 h-56 rounded-3xl object-cover shadow-md" />
+          <img src="/pebble_logo.png" alt="Pebble" className="w-56 h-56 rounded-3xl object-cover" />
           <div>
             <h1 className="text-4xl font-bold text-gray-900">Pebble</h1>
-            <p className="mt-2 text-gray-600">Find time in your busy life for what actually matters.</p>
+            <p className="mt-2 text-gray-600">Your health, scheduled.</p>
           </div>
         </div>
 

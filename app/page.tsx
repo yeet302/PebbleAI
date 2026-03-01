@@ -54,6 +54,7 @@ export default function HomePage() {
   const [showReschedule, setShowReschedule] = useState(false);
   const [rescheduleOptions, setRescheduleOptions] = useState<SchedulingOption[] | null>(null);
   const [rescheduleLoading, setRescheduleLoading] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     // 1. Check URL params for post-OAuth redirect tokens
@@ -446,34 +447,74 @@ export default function HomePage() {
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar — Goals + Week Score */}
-        <aside className="w-56 border-r bg-white flex flex-col flex-shrink-0">
-          <div className="px-4 py-3 border-b">
-            <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Goals</p>
+        {/* Left sidebar — Goals + Week Score (collapsible) */}
+        <aside className={`${sidebarCollapsed ? "w-12" : "w-52"} border-r bg-white flex flex-col flex-shrink-0 transition-all duration-200`}>
+          <div className={`flex items-center border-b px-2 py-3 ${sidebarCollapsed ? "justify-center" : "justify-between px-4"}`}>
+            {!sidebarCollapsed && <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Goals</p>}
+            <button
+              onClick={() => setSidebarCollapsed((c) => !c)}
+              className="text-gray-400 hover:text-gray-700 transition-colors rounded p-0.5"
+              title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            >
+              <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.5}>
+                {sidebarCollapsed
+                  ? <path strokeLinecap="round" d="M6 3l5 5-5 5" />
+                  : <path strokeLinecap="round" d="M10 3l-5 5 5 5" />}
+              </svg>
+            </button>
           </div>
-          <div className="flex-1 overflow-y-auto">
-            <div className="p-3">
-              <GoalList goals={schedule.goals} events={schedule.events} />
+
+          {sidebarCollapsed ? (
+            <div className="flex flex-col items-center gap-4 pt-4">
+              <button onClick={() => setSidebarCollapsed(false)} title="Goals" className="text-gray-400 hover:text-green-700 transition-colors">
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+                </svg>
+              </button>
+              {started && weekScore && (
+                <button onClick={() => setShowScore(true)} title="Week Score" className="text-gray-400 hover:text-green-700 transition-colors">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.562.562 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                  </svg>
+                </button>
+              )}
             </div>
-            {started && (scoreLoading || weekScore) && (
-              <>
-                <div className="px-4 py-3 border-t border-b">
-                  <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Week Score</p>
-                </div>
-                <div className="p-3">
-                  <ScorePanel
-                    score={weekScore}
-                    loading={scoreLoading}
-                    onViewDetails={() => setShowScore(true)}
-                  />
-                </div>
-              </>
-            )}
-          </div>
+          ) : (
+            <div className="flex-1 overflow-y-auto">
+              <div className="p-3">
+                <GoalList goals={schedule.goals} events={schedule.events} />
+              </div>
+              {started && (scoreLoading || weekScore) && (
+                <>
+                  <div className="px-4 py-3 border-t border-b">
+                    <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Week Score</p>
+                  </div>
+                  <div className="p-3">
+                    <ScorePanel
+                      score={weekScore}
+                      loading={scoreLoading}
+                      onViewDetails={() => setShowScore(true)}
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+          )}
         </aside>
 
-        {/* Calendar */}
-        <main className="flex-1 overflow-hidden p-4">
+        {/* Center — Chat (primary) */}
+        <div className="flex-1 overflow-hidden flex flex-col border-r bg-white">
+          <div className="px-4 py-3 border-b flex-shrink-0">
+            <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Assistant</p>
+          </div>
+          {error && <p className="text-xs text-red-500 px-4 pt-2">{error}</p>}
+          <div className="flex-1 overflow-hidden">
+            <Chat messages={messages} onSend={sendMessage} loading={loading} />
+          </div>
+        </div>
+
+        {/* Right — Calendar */}
+        <div className="w-[680px] flex-shrink-0 flex flex-col overflow-hidden p-4">
           <Calendar
             events={schedule.events}
             highlightedEventIds={highlightedEventIds}
@@ -483,18 +524,7 @@ export default function HomePage() {
             optimizationMode={optimizationMode}
             onSetMode={handleModeChange}
           />
-        </main>
-
-        {/* Chat panel */}
-        <aside className="w-80 border-l bg-white flex flex-col flex-shrink-0">
-          <div className="px-4 py-3 border-b flex-shrink-0">
-            <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Assistant</p>
-          </div>
-          {error && <p className="text-xs text-red-500 px-4 pt-2">{error}</p>}
-          <div className="flex-1 overflow-hidden">
-            <Chat messages={messages} onSend={sendMessage} loading={loading} />
-          </div>
-        </aside>
+        </div>
       </div>
     </div>
   );
