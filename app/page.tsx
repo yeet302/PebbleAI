@@ -1,22 +1,22 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ScheduleState, UserProfile, Message } from "@/types";
+import { ScheduleState, Message, CalendarEvent } from "@/types";
 import Calendar from "@/components/Calendar";
 import GoalList from "@/components/GoalList";
 import Chat from "@/components/Chat";
-import Onboarding from "@/components/Onboarding";
+import Landing from "@/components/Landing";
 import WeeklyReview from "@/components/WeeklyReview";
 
-const SCHEDULE_KEY = "goalkeeper-schedule";
-const PROFILE_KEY = "goalkeeper-profile";
-const MESSAGES_KEY = "goalkeeper-messages";
+const SCHEDULE_KEY = "pebble-schedule";
+const MESSAGES_KEY = "pebble-messages";
+const STARTED_KEY = "pebble-started";
 const INITIAL_STATE: ScheduleState = { events: [], goals: [] };
 
 export default function HomePage() {
   const [schedule, setSchedule] = useState<ScheduleState>(INITIAL_STATE);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [started, setStarted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showReview, setShowReview] = useState(false);
@@ -25,10 +25,9 @@ export default function HomePage() {
   useEffect(() => {
     const s = localStorage.getItem(SCHEDULE_KEY);
     if (s) setSchedule(JSON.parse(s));
-    const p = localStorage.getItem(PROFILE_KEY);
-    if (p) setProfile(JSON.parse(p));
     const m = localStorage.getItem(MESSAGES_KEY);
     if (m) setMessages(JSON.parse(m));
+    if (localStorage.getItem(STARTED_KEY)) setStarted(true);
   }, []);
 
   useEffect(() => {
@@ -38,6 +37,21 @@ export default function HomePage() {
   useEffect(() => {
     localStorage.setItem(MESSAGES_KEY, JSON.stringify(messages));
   }, [messages]);
+
+  const begin = (importedEvents: CalendarEvent[] = []) => {
+    const next: ScheduleState = { events: importedEvents, goals: [] };
+    setSchedule(next);
+    setStarted(true);
+    localStorage.setItem(STARTED_KEY, "1");
+
+    const greeting: Message = {
+      role: "assistant",
+      content: importedEvents.length
+        ? `I've loaded ${importedEvents.length} events from your calendar. What goal or hobby do you want to make time for?`
+        : "What goal or hobby do you want to make time for?",
+    };
+    setMessages([greeting]);
+  };
 
   const sendMessage = async (text: string) => {
     const userMessage: Message = { role: "user", content: text };
@@ -65,33 +79,18 @@ export default function HomePage() {
     }
   };
 
-  const handleOnboardingComplete = async (p: UserProfile) => {
-    setProfile(p);
-    localStorage.setItem(PROFILE_KEY, JSON.stringify(p));
-
-    const classLines = p.classes.map(
-      (c) => `${c.name} on ${c.days.join("/")} from ${c.startTime} to ${c.endTime}`
-    ).join(", ");
-
-    const intro = `Hi! I'm ${p.name}, a ${p.year} ${p.major} student at ${p.school}.${
-      classLines ? ` My classes: ${classLines}.` : ""
-    }${p.goals.length ? ` My goals: ${p.goals.join("; ")}.` : ""} Please set up my initial schedule.`;
-
-    await sendMessage(intro);
-  };
-
   const handleClear = () => {
     setSchedule(INITIAL_STATE);
-    setProfile(null);
     setMessages([]);
+    setStarted(false);
     localStorage.removeItem(SCHEDULE_KEY);
-    localStorage.removeItem(PROFILE_KEY);
     localStorage.removeItem(MESSAGES_KEY);
+    localStorage.removeItem(STARTED_KEY);
   };
 
   return (
     <div className="h-screen overflow-hidden flex flex-col">
-      {!profile && !loading && <Onboarding onComplete={handleOnboardingComplete} />}
+      {!started && <Landing onImport={(events) => begin(events)} onSkip={() => begin()} />}
       {showReview && (
         <WeeklyReview
           events={schedule.events}
@@ -102,9 +101,8 @@ export default function HomePage() {
 
       {/* Header */}
       <header className="border-b bg-white px-6 py-4 flex items-center justify-between shadow-sm flex-shrink-0">
-        <h1 className="text-xl font-bold text-blue-600">GoalKeeper</h1>
+        <h1 className="text-xl font-bold text-blue-600">Pebble</h1>
         <div className="flex items-center gap-4">
-          {profile && <span className="text-sm text-gray-500">Hey, {profile.name} 👋</span>}
           <button
             onClick={() => setShowReview(true)}
             className="text-xs text-gray-500 border border-gray-200 rounded-lg px-3 py-1.5 hover:border-blue-300 hover:text-blue-600 transition-colors"

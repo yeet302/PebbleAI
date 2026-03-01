@@ -29,6 +29,16 @@ const categoryColors: Record<string, string> = {
   personal: "bg-gray-400 text-white border-gray-500",
 };
 
+// Imported events use muted/outlined style
+const importedColors: Record<string, string> = {
+  class:    "bg-blue-50 text-blue-700 border-blue-300",
+  study:    "bg-yellow-50 text-yellow-700 border-yellow-300",
+  gym:      "bg-green-50 text-green-700 border-green-300",
+  work:     "bg-orange-50 text-orange-700 border-orange-300",
+  goal:     "bg-purple-50 text-purple-700 border-purple-300",
+  personal: "bg-gray-50 text-gray-600 border-gray-300",
+};
+
 const categoryDotColors: Record<string, string> = {
   class: "bg-blue-400", study: "bg-yellow-400", gym: "bg-green-400",
   work: "bg-orange-400", goal: "bg-purple-400", personal: "bg-gray-400",
@@ -135,7 +145,8 @@ function WeekView({ days, events, today, highlights }: { days: string[]; events:
                 ))}
                 {laid.map(({ event, slotIndex, totalSlots }) => {
                   const { top, height } = getEventStyle(event.startTime, event.endTime);
-                  const colors = categoryColors[event.category] ?? categoryColors.personal;
+                  const palette = event.source === "imported" ? importedColors : categoryColors;
+                  const colors = palette[event.category] ?? palette.personal;
                   return (
                     <div
                       key={event.id}
@@ -201,7 +212,7 @@ function MonthView({ year, month, events, today, onDayClick }: {
                     <div className="space-y-0.5">
                       {dayEvents.slice(0, 3).map((e) => (
                         <div key={e.id}
-                          className={`text-xs truncate rounded px-1 ${categoryColors[e.category] ?? categoryColors.personal}`}
+                          className={`text-xs truncate rounded px-1 ${(e.source === "imported" ? importedColors : categoryColors)[e.category] ?? categoryColors.personal}`}
                           title={`${e.title} ${e.startTime}–${e.endTime}`}>
                           {e.title}
                         </div>
