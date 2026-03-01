@@ -1,21 +1,29 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Message } from "@/types";
+import { Message, SchedulingOption } from "@/types";
+
+const OPTION_STYLES: Record<string, { icon: string; border: string; hover: string; iconBg: string }> = {
+  sleep:        { icon: "🌙", border: "border-indigo-100", hover: "hover:border-indigo-300 hover:bg-indigo-50", iconBg: "bg-indigo-100" },
+  productivity: { icon: "⚡", border: "border-amber-100",  hover: "hover:border-amber-300 hover:bg-amber-50",   iconBg: "bg-amber-100"  },
+  fitness:      { icon: "💪", border: "border-green-100",  hover: "hover:border-green-300 hover:bg-green-50",   iconBg: "bg-green-100"  },
+};
 
 interface ChatProps {
   messages: Message[];
   onSend: (text: string) => void;
   loading: boolean;
+  pendingOptions?: SchedulingOption[] | null;
+  onSelectOption?: (id: string) => void;
 }
 
-export default function Chat({ messages, onSend, loading }: ChatProps) {
+export default function Chat({ messages, onSend, loading, pendingOptions, onSelectOption }: ChatProps) {
   const [value, setValue] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, loading]);
+  }, [messages, loading, pendingOptions]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,6 +65,36 @@ export default function Chat({ messages, onSend, loading }: ChatProps) {
             </div>
           </div>
         )}
+
+        {/* Scheduling option cards */}
+        {!loading && pendingOptions && pendingOptions.length > 0 && (
+          <div className="space-y-2 pt-1">
+            {pendingOptions.map((opt) => {
+              const s = OPTION_STYLES[opt.id] ?? OPTION_STYLES.fitness;
+              return (
+                <button
+                  key={opt.id}
+                  onClick={() => onSelectOption?.(opt.id)}
+                  className={`flex items-start gap-3 w-full text-left rounded-xl border bg-white p-3 transition-colors ${s.border} ${s.hover}`}
+                >
+                  <span className={`text-lg rounded-lg p-1.5 ${s.iconBg} flex-shrink-0 leading-none`}>{s.icon}</span>
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold text-gray-800">{opt.title}</p>
+                    <ul className="mt-1 space-y-0.5">
+                      {opt.points.map((pt, j) => (
+                        <li key={j} className="text-xs text-gray-500 leading-snug flex gap-1">
+                          <span className="text-gray-300 flex-shrink-0">•</span>
+                          <span>{pt}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
+
         <div ref={bottomRef} />
       </div>
 

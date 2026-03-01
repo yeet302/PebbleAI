@@ -33,9 +33,25 @@ export interface Message {
   content: string;
 }
 
+export interface SchedulingOption {
+  id: "sleep" | "productivity" | "fitness";
+  title: string;
+  points: string[];           // 2–3 goal-specific bullets
+  rationale: string;          // coach message shown when user picks this option
+  goalDraft: {
+    id: string;
+    title: string;
+    type: "short-term" | "long-term";
+    deadline: string;
+    description?: string;
+  };
+  previewEvents: CalendarEvent[];  // proposed Pebbles for this option
+}
+
 export interface ChatResponse {
   message: string;
   diff?: Partial<ScheduleDiff>;
+  schedulingOptions?: SchedulingOption[];
 }
 
 export interface ScoreCategory {

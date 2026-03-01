@@ -14,12 +14,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Messages are required" }, { status: 400 });
     }
 
-    const { response, updatedState, changedEventIds, setProfile } = await chat(messages, currentState, profile ?? null);
+    const { response, updatedState, changedEventIds, setProfile, schedulingOptions } = await chat(messages, currentState, profile ?? null);
     return NextResponse.json({
       message: response.message,
       schedule: updatedState,
       changedEventIds,
       profile: setProfile ?? null,
+      schedulingOptions: schedulingOptions ?? null,
     });
   } catch (err) {
     console.error("Schedule API error:", err);

@@ -6,6 +6,7 @@ import EventPopover from "@/components/EventPopover";
 
 interface CalendarProps {
   events: CalendarEvent[];
+  previewEvents?: CalendarEvent[];
   highlightedEventIds?: string[];
   onHighlightDone?: () => void;
   onUpdateEvent?: (event: CalendarEvent) => void;
@@ -123,7 +124,8 @@ function layoutEvents(events: CalendarEvent[]) {
 }
 
 // ── sub-views ────────────────────────────────────────────────────────────────
-function WeekView({ days, events, today, highlights, onEventClick }: { days: string[]; events: CalendarEvent[]; today: string; highlights: Set<string>; onEventClick: (e: CalendarEvent) => void }) {
+function WeekView({ days, events, previewEvents, today, highlights, onEventClick }: { days: string[]; events: CalendarEvent[]; previewEvents: CalendarEvent[]; today: string; highlights: Set<string>; onEventClick: (e: CalendarEvent) => void }) {
+  const previewIds = new Set(previewEvents.map((e) => e.id));
 
   return (
     <div className="flex flex-col flex-1 overflow-hidden border border-gray-200 rounded-xl">
@@ -154,7 +156,10 @@ function WeekView({ days, events, today, highlights, onEventClick }: { days: str
         </div>
         <div className="flex flex-1">
           {days.map((date) => {
-            const dayEvents = events.filter((e) => e.date === date);
+            const dayEvents = [
+              ...events.filter((e) => e.date === date),
+              ...previewEvents.filter((e) => e.date === date),
+            ];
             const laid = layoutEvents(dayEvents);
             return (
               <div key={date} className="flex-1 border-l border-gray-100 relative" style={{ height: TOTAL_HOURS * HOUR_HEIGHT }}>
@@ -166,13 +171,14 @@ function WeekView({ days, events, today, highlights, onEventClick }: { days: str
                 ))}
                 {laid.map(({ event, slotIndex, totalSlots }) => {
                   const { top, height } = getEventStyle(event.startTime, event.endTime);
-                  const palette = event.source === "imported" ? importedColors : categoryColors;
+                  const isPreview = previewIds.has(event.id);
+                  const palette = isPreview ? importedColors : (event.source === "imported" ? importedColors : categoryColors);
                   const colors = palette[event.category] ?? palette.personal;
                   return (
                     <div
                       key={event.id}
-                      onClick={() => onEventClick(event)}
-                      className={`absolute rounded-lg border-l-4 px-2 py-1 text-xs overflow-hidden cursor-pointer shadow-sm transition-shadow ${colors} ${highlights.has(event.id) ? "ring-2 ring-white ring-offset-1 animate-pulse shadow-lg" : ""}`}
+                      onClick={isPreview ? undefined : () => onEventClick(event)}
+                      className={`absolute rounded-lg px-2 py-1 text-xs overflow-hidden shadow-sm transition-shadow ${colors} ${isPreview ? "border-2 border-dashed opacity-75 cursor-default" : "border-l-4 cursor-pointer"} ${!isPreview && highlights.has(event.id) ? "ring-2 ring-white ring-offset-1 animate-pulse shadow-lg" : ""}`}
                       style={{
                         top, height,
                         left: `calc(${(slotIndex / totalSlots) * 100}% + 4px)`,
@@ -307,7 +313,7 @@ function YearView({ year, events, onMonthClick }: {
 }
 
 // ── main component ───────────────────────────────────────────────────────────
-export default function Calendar({ events, highlightedEventIds, onHighlightDone, onUpdateEvent, onDeleteEvent }: CalendarProps) {
+export default function Calendar({ events, previewEvents = [], highlightedEventIds, onHighlightDone, onUpdateEvent, onDeleteEvent }: CalendarProps) {
   const [view, setView] = useState<View>("week");
   const [current, setCurrent] = useState(new Date());
   const [highlights, setHighlights] = useState<Set<string>>(new Set());
@@ -386,7 +392,7 @@ export default function Calendar({ events, highlightedEventIds, onHighlightDone,
         </div>
       </div>
 
-      {view === "week" && <WeekView days={weekDays} events={events} today={today} highlights={highlights} onEventClick={setSelectedEvent} />}
+      {view === "week" && <WeekView days={weekDays} events={events} previewEvents={previewEvents} today={today} highlights={highlights} onEventClick={setSelectedEvent} />}
 
       {selectedEvent && (
         <EventPopover
