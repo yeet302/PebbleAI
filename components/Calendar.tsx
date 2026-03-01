@@ -2,11 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { CalendarEvent } from "@/types";
+import EventPopover from "@/components/EventPopover";
 
 interface CalendarProps {
   events: CalendarEvent[];
   highlightedEventIds?: string[];
   onHighlightDone?: () => void;
+  onUpdateEvent?: (event: CalendarEvent) => void;
+  onDeleteEvent?: (id: string) => void;
 }
 
 type View = "week" | "month" | "year";
@@ -103,7 +106,7 @@ function layoutEvents(events: CalendarEvent[]) {
 }
 
 // ── sub-views ────────────────────────────────────────────────────────────────
-function WeekView({ days, events, today, highlights }: { days: string[]; events: CalendarEvent[]; today: string; highlights: Set<string> }) {
+function WeekView({ days, events, today, highlights, onEventClick }: { days: string[]; events: CalendarEvent[]; today: string; highlights: Set<string>; onEventClick: (e: CalendarEvent) => void }) {
   return (
     <div className="flex flex-col flex-1 overflow-hidden border border-gray-200 rounded-xl">
       {/* Day headers */}
@@ -150,6 +153,7 @@ function WeekView({ days, events, today, highlights }: { days: string[]; events:
                   return (
                     <div
                       key={event.id}
+                      onClick={() => onEventClick(event)}
                       className={`absolute rounded-lg border-l-4 px-2 py-1 text-xs overflow-hidden cursor-pointer shadow-sm transition-shadow ${colors} ${highlights.has(event.id) ? "ring-2 ring-white ring-offset-1 animate-pulse shadow-lg" : ""}`}
                       style={{
                         top, height,
@@ -282,10 +286,11 @@ function YearView({ year, events, onMonthClick }: {
 }
 
 // ── main component ───────────────────────────────────────────────────────────
-export default function Calendar({ events, highlightedEventIds, onHighlightDone }: CalendarProps) {
+export default function Calendar({ events, highlightedEventIds, onHighlightDone, onUpdateEvent, onDeleteEvent }: CalendarProps) {
   const [view, setView] = useState<View>("week");
   const [current, setCurrent] = useState(new Date());
   const [highlights, setHighlights] = useState<Set<string>>(new Set());
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const today = toISO(new Date());
 
   useEffect(() => {
@@ -360,7 +365,16 @@ export default function Calendar({ events, highlightedEventIds, onHighlightDone 
         </div>
       </div>
 
-      {view === "week" && <WeekView days={weekDays} events={events} today={today} highlights={highlights} />}
+      {view === "week" && <WeekView days={weekDays} events={events} today={today} highlights={highlights} onEventClick={setSelectedEvent} />}
+
+      {selectedEvent && (
+        <EventPopover
+          event={selectedEvent}
+          onUpdate={(updated) => { onUpdateEvent?.(updated); setSelectedEvent(null); }}
+          onDelete={(id) => { onDeleteEvent?.(id); setSelectedEvent(null); }}
+          onClose={() => setSelectedEvent(null)}
+        />
+      )}
       {view === "month" && <MonthView year={year} month={month} events={events} today={today} onDayClick={goToDay} />}
       {view === "year" && <YearView year={year} events={events} onMonthClick={goToMonth} />}
     </div>

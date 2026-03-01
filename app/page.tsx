@@ -101,7 +101,10 @@ export default function HomePage() {
 
       {/* Header */}
       <header className="border-b bg-white px-6 py-4 flex items-center justify-between shadow-sm flex-shrink-0">
-        <h1 className="text-xl font-bold text-blue-600">Pebble</h1>
+        <div className="flex items-center gap-2">
+          <img src="/pebble_logo.png" alt="Pebble" className="w-8 h-8 rounded-lg object-cover" />
+          <h1 className="text-xl font-bold text-blue-600">Pebble</h1>
+        </div>
         <div className="flex items-center gap-4">
           <button
             onClick={() => setShowReview(true)}
@@ -130,6 +133,8 @@ export default function HomePage() {
             events={schedule.events}
             highlightedEventIds={highlightedEventIds}
             onHighlightDone={() => setHighlightedEventIds([])}
+            onUpdateEvent={(updated) => setSchedule((s) => ({ ...s, events: s.events.map((e) => e.id === updated.id ? updated : e) }))}
+            onDeleteEvent={(id) => setSchedule((s) => ({ ...s, events: s.events.filter((e) => e.id !== id) }))}
           />
         </main>
 
