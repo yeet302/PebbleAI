@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CalendarEvent } from "@/types";
+import { CalendarEvent, OptimizationMode } from "@/types";
 import EventPopover from "@/components/EventPopover";
 
 interface CalendarProps {
@@ -11,6 +11,8 @@ interface CalendarProps {
   onHighlightDone?: () => void;
   onUpdateEvent?: (event: CalendarEvent) => void;
   onDeleteEvent?: (id: string) => void;
+  optimizationMode?: OptimizationMode;
+  onSetMode?: (mode: OptimizationMode) => void;
 }
 
 type View = "week" | "month" | "year";
@@ -312,8 +314,14 @@ function YearView({ year, events, onMonthClick }: {
   );
 }
 
+const MODE_TABS: { id: OptimizationMode; label: string; icon: string; active: string }[] = [
+  { id: "sleep",        icon: "🌙", label: "Sleep",        active: "bg-indigo-600 text-white" },
+  { id: "productivity", icon: "⚡", label: "Productivity", active: "bg-amber-500 text-white"  },
+  { id: "fitness",      icon: "💪", label: "Fitness",      active: "bg-green-600 text-white"  },
+];
+
 // ── main component ───────────────────────────────────────────────────────────
-export default function Calendar({ events, previewEvents = [], highlightedEventIds, onHighlightDone, onUpdateEvent, onDeleteEvent }: CalendarProps) {
+export default function Calendar({ events, previewEvents = [], highlightedEventIds, onHighlightDone, onUpdateEvent, onDeleteEvent, optimizationMode, onSetMode }: CalendarProps) {
   const [view, setView] = useState<View>("week");
   const [current, setCurrent] = useState(new Date());
   const [highlights, setHighlights] = useState<Set<string>>(new Set());
@@ -378,6 +386,25 @@ export default function Calendar({ events, previewEvents = [], highlightedEventI
         <span className="text-sm font-semibold text-gray-800 w-36 text-center">{label}</span>
         <button onClick={() => navigate(1)} className="rounded px-2 py-1 text-sm text-gray-700 hover:bg-gray-100">Next →</button>
         <button onClick={() => { setCurrent(new Date()); }} className="rounded px-2 py-1 text-xs text-blue-600 hover:bg-blue-50">Today</button>
+
+        {onSetMode && (
+          <div className="flex rounded-lg border border-gray-200 overflow-hidden text-xs">
+            {MODE_TABS.map((tab) => {
+              const isActive = optimizationMode === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => onSetMode(tab.id)}
+                  className={`flex items-center gap-1 px-2.5 py-1.5 transition-colors ${isActive ? tab.active : "text-gray-600 hover:bg-gray-50"}`}
+                  title={`${tab.label} mode`}
+                >
+                  <span>{tab.icon}</span>
+                  <span className="hidden sm:inline">{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         <div className="ml-auto flex rounded-lg border border-gray-200 overflow-hidden text-xs">
           {(["week", "month", "year"] as View[]).map((v) => (

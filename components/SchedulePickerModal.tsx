@@ -59,7 +59,7 @@ export default function SchedulePickerModal({ options, schedule, onSelect, onClo
           {/* Calendar preview */}
           <div className="flex-1 overflow-hidden">
             <Calendar
-              events={schedule.events}
+              events={schedule.events.filter((e) => e.source !== "pebble")}
               previewEvents={active.previewEvents}
             />
           </div>

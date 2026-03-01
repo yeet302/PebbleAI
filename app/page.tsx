@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ScheduleState, Message, CalendarEvent, UserProfile, SchedulingOption, WeekScore } from "@/types";
+import { ScheduleState, Message, CalendarEvent, UserProfile, SchedulingOption, OptimizationMode, WeekScore } from "@/types";
 import Calendar from "@/components/Calendar";
 import GoalList from "@/components/GoalList";
 import Chat from "@/components/Chat";
@@ -20,6 +20,7 @@ const GC_REFRESH_KEY = "pebble-gc-refresh";
 const GC_EXPIRY_KEY = "pebble-gc-expiry";
 const PROFILE_KEY = "pebble-profile";
 const SCORE_CACHE_KEY = "pebble-score-cache";
+const MODE_KEY = "pebble-mode";
 
 function scheduleHash(schedule: ScheduleState): string {
   const today = new Date().toISOString().split("T")[0];
@@ -46,10 +47,13 @@ export default function HomePage() {
   const [weekScore, setWeekScore] = useState<WeekScore | null>(null);
   const [scoreLoading, setScoreLoading] = useState(false);
   const [scoreCacheHash, setScoreCacheHash] = useState<string>("");
-  const [pendingOptions, setPendingOptions] = useState<SchedulingOption[] | null>(null);
   const [highlightedEventIds, setHighlightedEventIds] = useState<string[]>([]);
   const [gcConnected, setGcConnected] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [optimizationMode, setOptimizationMode] = useState<OptimizationMode>("fitness");
+  const [showReschedule, setShowReschedule] = useState(false);
+  const [rescheduleOptions, setRescheduleOptions] = useState<SchedulingOption[] | null>(null);
+  const [rescheduleLoading, setRescheduleLoading] = useState(false);
 
   useEffect(() => {
     // 1. Check URL params for post-OAuth redirect tokens
@@ -79,6 +83,10 @@ export default function HomePage() {
     // Load profile
     const storedProfile = localStorage.getItem(PROFILE_KEY);
     if (storedProfile) setProfile(JSON.parse(storedProfile));
+
+    // Load optimization mode
+    const storedMode = localStorage.getItem(MODE_KEY) as OptimizationMode | null;
+    if (storedMode) setOptimizationMode(storedMode);
 
     // Load cached score (only if hash still matches)
     const cachedScore = localStorage.getItem(SCORE_CACHE_KEY);
@@ -148,10 +156,11 @@ export default function HomePage() {
         setTimeout(() => {
           setMessages((prev) => {
             const next = [...prev, checkinMsg];
+            const currentMode = (localStorage.getItem(MODE_KEY) as OptimizationMode | null) ?? "fitness";
             fetch("/api/schedule", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ messages: next, currentState: loadedSchedule, profile: currentProfile }),
+              body: JSON.stringify({ messages: next, currentState: loadedSchedule, profile: currentProfile, optimizationMode: currentMode }),
             })
               .then((r) => r.json())
               .then((data) => {
@@ -230,16 +239,15 @@ export default function HomePage() {
     setMessages(nextMessages);
     setLoading(true);
     setError(null);
-    setPendingOptions(null);
 
     try {
       const res = await fetch("/api/schedule", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: nextMessages, currentState: schedule, profile }),
+        body: JSON.stringify({ messages: nextMessages, currentState: schedule, profile, optimizationMode }),
       });
       if (!res.ok) throw new Error("Failed to reach AI");
-      const data: { message: string; schedule: ScheduleState; changedEventIds: string[]; profile: UserProfile | null; schedulingOptions: SchedulingOption[] | null } = await res.json();
+      const data: { message: string; schedule: ScheduleState; changedEventIds: string[]; profile: UserProfile | null } = await res.json();
 
       setMessages((prev) => [...prev, { role: "assistant", content: data.message }]);
       setSchedule(data.schedule);
@@ -248,9 +256,6 @@ export default function HomePage() {
         setProfile(data.profile);
         localStorage.setItem(PROFILE_KEY, JSON.stringify(data.profile));
       }
-      if (data.schedulingOptions?.length) {
-        setPendingOptions(data.schedulingOptions);
-      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -258,16 +263,45 @@ export default function HomePage() {
     }
   };
 
-  const handleSelectOption = (id: string) => {
-    const option = pendingOptions?.find((o) => o.id === id);
+  const handleModeChange = (mode: OptimizationMode) => {
+    setOptimizationMode(mode);
+    localStorage.setItem(MODE_KEY, mode);
+  };
+
+  const handleOpenReschedule = async () => {
+    setRescheduleLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/reschedule", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ schedule, profile }),
+      });
+      if (!res.ok) throw new Error("Failed to generate reschedule options");
+      const options: SchedulingOption[] = await res.json();
+      setRescheduleOptions(options);
+      setShowReschedule(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setRescheduleLoading(false);
+    }
+  };
+
+  const handleApplyReschedule = (id: string) => {
+    const option = rescheduleOptions?.find((o) => o.id === id);
     if (!option) return;
     setSchedule((prev) => ({
-      goals: [...prev.goals, option.goalDraft],
-      events: [...prev.events, ...option.previewEvents],
+      ...prev,
+      events: [
+        ...prev.events.filter((e) => e.source !== "pebble"),
+        ...option.previewEvents,
+      ],
     }));
     setMessages((prev) => [...prev, { role: "assistant", content: option.rationale }]);
     setHighlightedEventIds(option.previewEvents.map((e) => e.id));
-    setPendingOptions(null);
+    setShowReschedule(false);
+    setRescheduleOptions(null);
   };
 
   const handleClear = () => {
@@ -276,9 +310,11 @@ export default function HomePage() {
     setStarted(false);
     setGcConnected(false);
     setProfile(null);
-    setPendingOptions(null);
     setWeekScore(null);
     setScoreCacheHash("");
+    setOptimizationMode("fitness");
+    setShowReschedule(false);
+    setRescheduleOptions(null);
     localStorage.removeItem(SCHEDULE_KEY);
     localStorage.removeItem(SCORE_CACHE_KEY);
     localStorage.removeItem(MESSAGES_KEY);
@@ -287,6 +323,7 @@ export default function HomePage() {
     localStorage.removeItem(GC_REFRESH_KEY);
     localStorage.removeItem(GC_EXPIRY_KEY);
     localStorage.removeItem(PROFILE_KEY);
+    localStorage.removeItem(MODE_KEY);
   };
 
   const handleGcDisconnect = () => {
@@ -328,12 +365,12 @@ export default function HomePage() {
   return (
     <div className="h-screen overflow-hidden flex flex-col">
       {!started && <Landing onImport={(events) => begin(events)} onSkip={() => begin()} />}
-      {pendingOptions && (
+      {showReschedule && rescheduleOptions && (
         <SchedulePickerModal
-          options={pendingOptions}
+          options={rescheduleOptions}
           schedule={schedule}
-          onSelect={handleSelectOption}
-          onClose={() => setPendingOptions(null)}
+          onSelect={handleApplyReschedule}
+          onClose={() => { setShowReschedule(false); setRescheduleOptions(null); }}
         />
       )}
       {showScore && (
@@ -381,6 +418,15 @@ export default function HomePage() {
               Edit Preferences
             </button>
           )}
+          {started && schedule.events.some((e) => e.source === "pebble") && (
+            <button
+              onClick={handleOpenReschedule}
+              disabled={rescheduleLoading}
+              className="text-xs text-white bg-blue-600 border border-blue-600 rounded-lg px-3 py-1.5 hover:bg-blue-700 transition-colors disabled:opacity-60"
+            >
+              {rescheduleLoading ? "Loading…" : "Reschedule"}
+            </button>
+          )}
           <button
             onClick={() => setShowReview(true)}
             className="text-xs text-gray-500 border border-gray-200 rounded-lg px-3 py-1.5 hover:border-blue-300 hover:text-blue-600 transition-colors"
@@ -426,6 +472,8 @@ export default function HomePage() {
             onHighlightDone={() => setHighlightedEventIds([])}
             onUpdateEvent={(updated) => setSchedule((s) => ({ ...s, events: s.events.map((e) => e.id === updated.id ? updated : e) }))}
             onDeleteEvent={(id) => setSchedule((s) => ({ ...s, events: s.events.filter((e) => e.id !== id) }))}
+            optimizationMode={optimizationMode}
+            onSetMode={handleModeChange}
           />
         </main>
 

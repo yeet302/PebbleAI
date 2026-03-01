@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { ScheduleState, ScheduleDiff, Message, ChatResponse, UserProfile, SchedulingOption } from "@/types";
+import { ScheduleState, ScheduleDiff, Message, ChatResponse, UserProfile, OptimizationMode } from "@/types";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
@@ -40,12 +40,12 @@ const SCHEDULING_PROMPT = `You are Pebble, a scheduling assistant that helps peo
 
 USER PROFILE:
 {PROFILE_PLACEHOLDER}
+Active optimization mode: {MODE_PLACEHOLDER}
 
 RESPONSE FORMAT — always return valid JSON, no markdown:
 {
   "message": "what you say to the user",
-  "diff": { ...only when making changes... } or null,
-  "schedulingOptions": [ ...only when presenting goal options, see below... ] or omit entirely
+  "diff": { ...only when making changes... } or null
 }
 
 Diff schema (use null if not making changes yet):
@@ -85,61 +85,14 @@ DAILY CHECK-IN:
 BEHAVIOR:
 - Your job is to help users achieve their goals by finding realistic time in their existing schedule.
 - Every goal MUST have a deadline. If the user doesn't provide one, ask for it before scheduling anything.
-- Once you have the goal AND deadline, do NOT immediately schedule. Instead, present 3 scheduling options by returning "schedulingOptions" (see SCHEDULING OPTIONS below). Set diff to null.
+- Once you have the goal AND deadline, immediately schedule Pebbles using the active optimization mode's rules. Include a brief coaching explanation for each Pebble's timing in your message.
 - If other details are vague (frequency, duration), make a reasonable decision — don't ask more than 1 follow-up question beyond the deadline.
 - Call scheduled blocks "Pebbles" — never "sessions".
 - Keep responses short and conversational.
 - Today's date is ${new Date().toISOString().split("T")[0]}.
 
-SCHEDULING OPTIONS:
-Once you have the goal and deadline, present 3 tailored scheduling previews before committing. Return them as "schedulingOptions" in your response (omit the field at all other times). Each option must include fully computed events so the user can preview them on the calendar right away.
-
-{
-  "message": "Here are 3 ways I can schedule [goal name] — tap one to preview it on the calendar, then confirm when you're happy.",
-  "diff": null,
-  "schedulingOptions": [
-    {
-      "id": "sleep",
-      "title": "Sleep Optimized",
-      "points": ["<specific bullet for THIS goal>", "<specific bullet>", "<specific bullet>"],
-      "rationale": "<2-3 sentences explaining why these times were chosen using sleep science — coach tone, mention specific times>",
-      "goalDraft": { "id": "<uuid>", "title": "<goal title>", "type": "short-term|long-term", "deadline": "<YYYY-MM-DD>", "description": "<optional>" },
-      "previewEvents": [
-        { "id": "<uuid>", "title": "<event title>", "date": "<YYYY-MM-DD>", "startTime": "<HH:MM>", "endTime": "<HH:MM>", "category": "<category>", "source": "pebble", "goalId": "<goalDraft.id>" }
-      ]
-    },
-    {
-      "id": "productivity",
-      "title": "Productivity Optimized",
-      "points": ["<specific bullet>", "<specific bullet>", "<specific bullet>"],
-      "rationale": "<2-3 sentences with productivity/cognitive science reasoning>",
-      "goalDraft": { "id": "<uuid — different from sleep option>", "title": "<goal title>", "type": "short-term|long-term", "deadline": "<YYYY-MM-DD>" },
-      "previewEvents": [ /* full event objects */ ]
-    },
-    {
-      "id": "fitness",
-      "title": "Fitness Optimized",
-      "points": ["<specific bullet>", "<specific bullet>", "<specific bullet>"],
-      "rationale": "<2-3 sentences with training science reasoning>",
-      "goalDraft": { "id": "<uuid — different from other options>", "title": "<goal title>", "type": "short-term|long-term", "deadline": "<YYYY-MM-DD>" },
-      "previewEvents": [ /* full event objects */ ]
-    }
-  ]
-}
-
-RULES FOR PREVIEW EVENTS:
-- Generate real CalendarEvent objects with unique UUIDs for each event and each goalDraft.
-- Each option's previewEvents must use its own goalDraft.id as goalId.
-- Apply the relevant optimization mode rules (see OPTIMIZATION MODES) when computing each option's event times.
-- All 3 options should have the same number of Pebbles and cover the same date range — only the TIMES differ based on the optimization.
-- Bullet points must be specific to the actual goal (e.g. "Runs at 7am before cortisol peaks", not just "Morning sessions").
-- Rationale should mention specific times and the science behind them in 2-3 coaching sentences.
-
 OPTIMIZATION MODES:
-When the conversation includes a [SLEEP OPTIMIZATION], [PRODUCTIVITY OPTIMIZATION], or [FITNESS OPTIMIZATION] tag, switch into that mode for goal scheduling. In optimization mode:
-- Apply the scientific constraints listed in the tag strictly — they override general scheduling preferences.
-- For every Pebble you schedule, include a one-sentence explanation in your message of WHY that time was chosen based on the science (e.g. "I placed your workout at 7am because intense exercise within 3 hours of sleep raises core body temperature and delays sleep onset.").
-- Keep the overall message concise — the explanations should feel like coaching tips, not a lecture.
+The active optimization mode is listed in the user profile above. Apply its rules when scheduling Pebbles. For every Pebble you schedule, include a one-sentence explanation in your message of WHY that time was chosen based on the science (e.g. "I placed your workout at 7am because intense exercise within 3 hours of sleep raises core body temperature and delays sleep onset."). Keep the overall message concise — the explanations should feel like coaching tips, not a lecture.
 
 Sleep Optimization rules:
 - No intense exercise (gym/cardio) within 3 hours of sleepTime — raises core body temperature, delaying sleep onset by 30–60 min.
@@ -162,7 +115,7 @@ Fitness Optimization rules:
 - Start with 3 sessions/week for new goals — progressive overload principle (increase volume before intensity).
 - Schedule a post-workout Pebble window of 30 min for nutrition/cooldown if possible — protein synthesis window peaks within 30–60 min post-exercise.`;
 
-export function buildSystemPrompt(profile: UserProfile | null): string {
+export function buildSystemPrompt(profile: UserProfile | null, optimizationMode: OptimizationMode | null): string {
   if (profile === null) return ONBOARDING_PROMPT;
 
   const profileBullets = [
@@ -177,10 +130,10 @@ export function buildSystemPrompt(profile: UserProfile | null): string {
     .filter(Boolean)
     .join("\n");
 
-  return SCHEDULING_PROMPT.replace("{PROFILE_PLACEHOLDER}", profileBullets).replace(
-    "{NAME_PLACEHOLDER}",
-    profile.name
-  );
+  return SCHEDULING_PROMPT
+    .replace("{PROFILE_PLACEHOLDER}", profileBullets)
+    .replace("{NAME_PLACEHOLDER}", profile.name)
+    .replace("{MODE_PLACEHOLDER}", optimizationMode ?? "fitness");
 }
 
 function buildPrompt(messages: Message[], currentState: ScheduleState): string {
@@ -289,12 +242,13 @@ export function parseJSON(raw: string): unknown {
 export async function chat(
   messages: Message[],
   currentState: ScheduleState,
-  profile: UserProfile | null
-): Promise<{ response: ChatResponse; updatedState: ScheduleState; changedEventIds: string[]; setProfile?: UserProfile; schedulingOptions?: SchedulingOption[] }> {
+  profile: UserProfile | null,
+  optimizationMode: OptimizationMode | null
+): Promise<{ response: ChatResponse; updatedState: ScheduleState; changedEventIds: string[]; setProfile?: UserProfile }> {
   const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
   const result = await model.generateContent([
-    { text: buildSystemPrompt(profile) },
+    { text: buildSystemPrompt(profile, optimizationMode) },
     { text: buildPrompt(messages, currentState) },
   ]);
 
@@ -303,5 +257,5 @@ export async function chat(
     ? applyDiff(currentState, parsed.diff)
     : { state: currentState, changedEventIds: [], setProfile: undefined };
 
-  return { response: parsed, updatedState, changedEventIds, setProfile, schedulingOptions: parsed.schedulingOptions };
+  return { response: parsed, updatedState, changedEventIds, setProfile };
 }

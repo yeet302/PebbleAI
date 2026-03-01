@@ -1,5 +1,6 @@
 export type EventCategory = "class" | "study" | "gym" | "work" | "goal" | "personal";
 export type EventSource = "imported" | "pebble";
+export type OptimizationMode = "sleep" | "productivity" | "fitness";
 
 export interface CalendarEvent {
   id: string;
@@ -34,11 +35,11 @@ export interface Message {
 }
 
 export interface SchedulingOption {
-  id: "sleep" | "productivity" | "fitness";
+  id: OptimizationMode;
   title: string;
   points: string[];           // 2–3 goal-specific bullets
   rationale: string;          // coach message shown when user picks this option
-  goalDraft: {
+  goalDraft?: {
     id: string;
     title: string;
     type: "short-term" | "long-term";
@@ -51,7 +52,6 @@ export interface SchedulingOption {
 export interface ChatResponse {
   message: string;
   diff?: Partial<ScheduleDiff>;
-  schedulingOptions?: SchedulingOption[];
 }
 
 export interface ScoreCategory {
