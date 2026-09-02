@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Pebble",
+  title: "PebbleAI",
   description: "AI-powered personal scheduler",
   icons: { icon: "/pebble_logo.png" },
 };

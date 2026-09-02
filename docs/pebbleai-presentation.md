@@ -2,10 +2,10 @@
 marp: true
 theme: default
 paginate: true
-title: GoalKeeperAI - Product Presentation
+title: PebbleAI - Product Presentation
 ---
 
-# GoalKeeperAI
+# PebbleAI
 ## AI-Powered Personal Scheduling with Pebble
 
 - Turn goals into calendar time blocks automatically
@@ -27,7 +27,7 @@ They fail because goals never get translated into protected time.
 
 # Our Solution
 
-GoalKeeperAI introduces **Pebble**, a chat-based scheduling assistant.
+PebbleAI introduces **Pebble**, a chat-based scheduling assistant.
 
 1. User describes a goal and deadline
 2. Pebble finds real free slots around existing commitments
@@ -135,7 +135,7 @@ Safety constraints in prompt/system logic:
 
 Calendars are where intentions become behavior.
 
-GoalKeeperAI closes the gap between:
+PebbleAI closes the gap between:
 
 - what users want to do
 - what their week actually allows
@@ -156,7 +156,7 @@ This creates a practical, personalized operating system for progress.
 
 # Thank You
 
-## GoalKeeperAI
+## PebbleAI
 **Chat. Schedule. Execute. Improve.**
 
 Questions?

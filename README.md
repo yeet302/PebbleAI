@@ -1,4 +1,4 @@
-# GoalkeeperAI
+# PebbleAI
 
 AI-powered personal scheduler. Chat with Pebble to set goals and deadlines — it finds free time in your calendar and schedules focused work blocks ("Pebbles") optimized for sleep, productivity, or fitness.
 
@@ -32,8 +32,8 @@ AI-powered personal scheduler. Chat with Pebble to set goals and deadlines — i
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/yeet302/GoalKeeperAI.git
-cd GoalKeeperAI
+git clone https://github.com/yeet302/Pebble.git
+cd Pebble
 
 # 2. Install dependencies
 npm install
@@ -94,7 +94,7 @@ npm run lint     # ESLint
 ## Project Structure
 
 ```
-GoalKeeperAI/
+PebbleAI/
 ├── app/
 │   ├── api/
 │   │   ├── schedule/route.ts       # POST /api/schedule — chat + scheduling

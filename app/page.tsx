@@ -395,8 +395,8 @@ export default function HomePage() {
       {/* Header */}
       <header className="border-b bg-white px-6 py-4 flex items-center justify-between shadow-sm flex-shrink-0">
         <div className="flex items-center gap-2">
-          <img src="/pebble_logo.png" alt="Pebble" className="w-8 h-8 rounded-lg object-cover" />
-          <h1 className="text-xl font-bold text-blue-600">Pebble</h1>
+          <img src="/pebble_logo.png" alt="PebbleAI" className="w-8 h-8 rounded-lg object-cover" />
+          <h1 className="text-xl font-bold text-blue-600">PebbleAI</h1>
         </div>
         <div className="flex items-center gap-4">
           {gcConnected && (
